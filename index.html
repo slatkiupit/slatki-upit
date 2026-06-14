@@ -1,6 +1,810 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="hr">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Slatki Upit – Naruči tortu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,400&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f7ede2;
+    --bg-soft: #fbf5ec;
+    --card: #ffffff;
+    --ink: #3d2c2a;
+    --ink-soft: #7a6160;
+    --muted: #c4aba6;
+    --accent: #d88c9a;
+    --accent-soft: #f4cbc6;
+    --accent-dark: #c4717f;
+    --line: #ead9c9;
+    --ok: #8fb09b;
+    --shadow: 0 4px 24px rgba(122, 80, 70, 0.09);
+    --radius: 20px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    font-family: 'Manrope', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.55;
+  }
+
+  h1, h2, h3 {
+    font-family: 'Fraunces', serif;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--bg-soft);
+    border-bottom: 1px solid var(--line);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.25rem;
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .brand-logo {
+    width: 36px;
+    height: 36px;
+    background: var(--accent-soft);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+  }
+
+  .step-counter {
+    font-size: 0.8rem;
+    color: var(--ink-soft);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-bar {
+    background: var(--line);
+    height: 3px;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.4s ease;
+  }
+
+  /* ── WRAP ── */
+  .wrap {
+    max-width: 560px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px 24px;
+    box-shadow: var(--shadow);
+    margin-bottom: 16px;
+  }
+
+  .card-header {
+    margin-bottom: 24px;
+  }
+.step-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+  }
+
+  .card-header h2 {
+    font-size: 1.6rem;
+    color: var(--ink);
+  }
+
+  .card-header p {
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    margin-top: 6px;
+  }
+
+  /* ── FIELDS ── */
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+
+  .field:last-child { margin-bottom: 0; }
+
+  .lbl {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="date"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--bg-soft);
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--accent);
+    background: white;
+  }
+
+  textarea { resize: vertical; min-height: 90px; }
+
+  .hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+
+  /* ── OPTIONS (chip select) ── */
+  .opts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 2px;
+  }
+
+  .opt {
+    padding: 9px 16px;
+    border: 1.5px solid var(--line);
+    border-radius: 99px;
+    font-size: 0.88rem;
+    cursor: pointer;
+    background: var(--bg-soft);
+    color: var(--ink);
+    transition: all 0.15s;
+    user-select: none;
+    font-family: 'Manrope', sans-serif;
+  }
+
+  .opt:hover { border-color: var(--accent-soft); }
+.opt.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    font-weight: 600;
+  }
+
+  /* ── CHECKBOX STYLE ── */
+  .check-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.92rem;
+  }
+
+  .check-item input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  /* ── SUMMARY ── */
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.92rem;
+  }
+
+  .summary-row:last-child { border-bottom: none; }
+
+  .summary-label { color: var(--ink-soft); }
+  .summary-value { font-weight: 600; text-align: right; max-width: 55%; }
+
+  .price-total {
+    background: var(--bg-soft);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+  }
+
+  .price-total .lbl { font-size: 0.85rem; color: var(--ink-soft); }
+  .price-total .amount {
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    color: var(--accent-dark);
+  }
+
+  /* ── FOOTER BAR ── */
+  .footer-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-soft);
+    border-top: 1px solid var(--line);
+    padding: 14px 20px;
+    z-index: 100;
+  }
+
+  .footer-inner {
+    max-width: 560px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+  }
+
+  .btn {
+    flex: 1;
+    padding: 14px 20px;
+    border-radius: 12px;
+    border: none;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+  }
+
+  .btn-primary:hover { background: var(--accent-dark); }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1.5px solid var(--line);
+    color: var(--ink-soft);
+    flex: 0 0 auto;
+    padding: 14px 18px;
+  }
+
+  .btn-ghost:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  /* ── SUCCESS ── */
+  .success-screen {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .success-icon {
+    font-size: 3.5rem;
+    margin-bottom: 16px;
+  }
+
+  .success-screen h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+  }
+
+  .success-screen p {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+
+  .info-box {
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    margin-top: 20px;
+    text-align: left;
+  }
+
+  .info-box .info-row {
+    display: flex;
+    gap: 10px;
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .info-box .info-row:last-child { margin-bottom: 0; }
+  .info-box .ico { font-size: 1rem; flex-shrink: 0; }
+
+  /* ── STEP visibility ── */
+  .step { display: none; }
+  .step.active { display: block; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .card { padding: 22px 18px; }
+    .wrap { padding: 24px 16px 80px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-logo">🍰</div>
+    Slatki Upit
+  </div>
+  <div class="step-counter" id="stepCounter">Korak 1 od 6</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill" style="width: 16.6%"></div>
+</div>
+
+<!-- WRAP -->
+<div class="wrap">
+
+  <!-- KORAK 1 — Prigoda -->
+  <div class="step active" id="step-1">
+    <div class="card">
+      <div class="card-header">
+        <div class="step-tag">korak 01 / 06</div>
+        <h2>Za kakvu prigodu?</h2>
+        <p>Odaberi vrstu proslave da slastičarka zna kontekst.</p>
+      </div>
+
+      <div class="field">
+        <div class="opts" id="opts-prigoda">
+          <div class="opt" onclick="selectOpt('prigoda', this)">🎂 Rođendan</div>
+          <div class="opt" onclick="selectOpt('prigoda', this)">💍 Vjenčanje</div>
+          <div class="opt" onclick="selectOpt('prigoda', this)">🎓 Matura</div>
+          <div class="opt" onclick="selectOpt('prigoda', this)">👶 Baby shower</div>
+          <div class="opt" onclick="selectOpt('prigoda', this)">🎉 Krštenje</div>
+          <div class="opt" onclick="selectOpt('prigoda', this)">🏆 Uspjeh / nagrada</div>
+          <div class="opt" onclick="selectOpt('prigoda', this)">💼 Poslovni event</div>
+          <div class="opt" onclick="selectOpt('prigoda', this)">✨ Drugo</div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top: 18px;">
+        <label class="lbl">Za koga je torta? (opcionalno)</label>
+        <input type="text" id="za-koga" placeholder='npr. "za Luku koji puni 6 godina"' />
+      </div>
+    </div>
+  </div>
+
+  <!-- KORAK 2 — Veličina -->
+  <div class="step" id="step-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="step-tag">korak 02 / 06</div>
+        <h2>Veličina torte</h2>
+        <p>Koliko će osoba jesti tortu?</p>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Broj osoba</label>
+        <div class="opts" id="opts-velicina">
+          <div class="opt" onclick="selectOpt('velicina', this)">do 10</div>
+          <div class="opt" onclick="selectOpt('velicina', this)">10 – 20</div>
+          <div class="opt" onclick="selectOpt('velicina', this)">20 – 30</div>
+          <div class="opt" onclick="selectOpt('velicina', this)">30 – 50</div>
+          <div class="opt" onclick="selectOpt('velicina', this)">50+</div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:18px;">
+        <label class="lbl">Oblik</label>
+        <div class="opts" id="opts-oblik">
+          <div class="opt" onclick="selectOpt('oblik', this)">⭕ Okrugla</div>
+          <div class="opt" onclick="selectOpt('oblik', this)">▭ Pravokutna</div>
+          <div class="opt" onclick="selectOpt('oblik', this)">❤️ Srce</div>
+          <div class="opt" onclick="selectOpt('oblik', this)">✨ Poseban oblik</div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:18px;">
+        <label class="lbl">Broj katova</label>
+        <div class="opts" id="opts-katovi">
+          <div class="opt" onclick="selectOpt('katovi', this)">Jedan kat</div>
+          <div class="opt" onclick="selectOpt('katovi', this)">Dva kata</div>
+          <div class="opt" onclick="selectOpt('katovi', this)">Tri kata</div>
+          <div class="opt" onclick="selectOpt('katovi', this)">Nisam sigurna</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KORAK 3 — Okusi -->
+  <div class="step" id="step-3">
+    <div class="card">
+      <div class="card-header">
+        <div class="step-tag">korak 03 / 06</div>
+        <h2>Okus i punjenje</h2>
+        <p>Što voliš unutra?</p>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Biskvit</label>
+        <div class="opts" id="opts-biskvit">
+          <div class="opt" onclick="selectOpt('biskvit', this)">Klasičan bijeli</div>
+          <div class="opt" onclick="selectOpt('biskvit', this)">Čokoladni</div>
+          <div class="opt" onclick="selectOpt('biskvit', this)">Red velvet</div>
+          <div class="opt" onclick="selectOpt('biskvit', this)">Limun</div>
+          <div class="opt" onclick="selectOpt('biskvit', this)">Nisam sigurna</div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:18px;">
+        <label class="lbl">Punjenje / krema</label>
+        <div class="opts" id="opts-krema">
+          <div class="opt" onclick="selectOpt('krema', this)">Nutella</div>
+          <div class="opt" onclick="selectOpt('krema', this)">Jagoda</div>
+          <div class="opt" onclick="selectOpt('krema', this)">Čokolada</div>
+          <div class="opt" onclick="selectOpt('krema', this)">Vanilija</div>
+          <div class="opt" onclick="selectOpt('krema', this)">Lješnjak</div>
+          <div class="opt" onclick="selectOpt('krema', this)">Malina</div>
+          <div class="opt" onclick="selectOpt('krema', this)">Nešto drugo</div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:18px;">
+        <label class="lbl">Premazivanje izvana</label>
+        <div class="opts" id="opts-premaz">
+          <div class="opt" onclick="selectOpt('premaz', this)">Šlag krema</div>
+          <div class="opt" onclick="selectOpt('premaz', this)">Buttercream</div>
+          <div class="opt" onclick="selectOpt('premaz', this)">Fondant</div>
+          <div class="opt" onclick="selectOpt('premaz', this)">Ganache</div>
+          <div class="opt" onclick="selectOpt('premaz', this)">Bez premaza</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KORAK 4 — Dekoracija -->
+  <div class="step" id="step-4">
+    <div class="card">
+      <div class="card-header">
+        <div class="step-tag">korak 04 / 06</div>
+        <h2>Dekoracija i poruka</h2>
+        <p>Kako treba izgledati torta?</p>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Stil dekoracije</label>
+        <div class="opts" id="opts-stil">
+          <div class="opt" onclick="selectOpt('stil', this)">🌸 Elegantno, cvjetno</div>
+          <div class="opt" onclick="selectOpt('stil', this)">🎈 Dječji, šareno</div>
+          <div class="opt" onclick="selectOpt('stil', this)">🖤 Minimalistično</div>
+          <div class="opt" onclick="selectOpt('stil', this)">✨ Glamurozno</div>
+          <div class="opt" onclick="selectOpt('stil', this)">🌿 Rustikalno, boho</div>
+          <div class="opt" onclick="selectOpt('stil', this)">Prema temi/liku</div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:18px;">
+        <label class="lbl">Boje koje treba koristiti (opcionalno)</label>
+        <input type="text" id="boje" placeholder='npr. "roze i zlatna" ili "plava i bijela"' />
+      </div>
+
+      <div class="field">
+        <label class="lbl">Natpis na torti (opcionalno)</label>
+        <input type="text" id="natpis" placeholder='npr. "Sretan 30. rođendan, Maja! 🎉"' />
+      </div>
+
+      <div class="field">
+        <label class="lbl">Alergeni ili posebne napomene</label>
+        <div class="check-list">
+          <label class="check-item">
+            <input type="checkbox" id="al-gluten" /> Bez glutena
+          </label>
+          <label class="check-item">
+            <input type="checkbox" id="al-laktoza" /> Bez laktoze
+          </label>
+          <label class="check-item">
+            <input type="checkbox" id="al-jaja" /> Bez jaja
+          </label>
+          <label class="check-item">
+            <input type="checkbox" id="al-orasi" /> Bez orašastih plodova
+          </label>
+        </div>
+      </div>
+<div class="field">
+        <label class="lbl">Posebne napomene za slastičarku</label>
+        <textarea id="napomene" placeholder="Sve što bi trebala znati — npr. dijete ne voli fondan, ref. slika na Instagramu, posebna tema…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- KORAK 5 — Datum & preuzimanje -->
+  <div class="step" id="step-5">
+    <div class="card">
+      <div class="card-header">
+        <div class="step-tag">korak 05 / 06</div>
+        <h2>Kad i kako?</h2>
+        <p>Datum kad torta treba biti gotova.</p>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Datum preuzimanja</label>
+        <input type="date" id="datum" min="" />
+        <div class="hint">Minimum 5 dana unaprijed. Slastičarka potvrđuje dostupnost.</div>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Preuzimanje</label>
+        <div class="opts" id="opts-preuzimanje">
+          <div class="opt" onclick="selectOpt('preuzimanje', this)">🏠 Osobno preuzimanje</div>
+          <div class="opt" onclick="selectOpt('preuzimanje', this)">🚗 Dostava na adresu</div>
+        </div>
+      </div>
+
+      <div class="field" id="adresa-field" style="display:none;">
+        <label class="lbl">Adresa dostave</label>
+        <input type="text" id="adresa" placeholder="Ulica i broj, grad" />
+      </div>
+    </div>
+  </div>
+
+  <!-- KORAK 6 — Kontakt & pregled -->
+  <div class="step" id="step-6">
+    <div class="card">
+      <div class="card-header">
+        <div class="step-tag">korak 06 / 06</div>
+        <h2>Tvoji podaci</h2>
+        <p>Za potvrdu narudžbe i kontakt.</p>
+      </div>
+
+      <div class="field">
+        <label class="lbl">Tvoje ime i prezime</label>
+        <input type="text" id="ime" placeholder="Ana Anić" />
+      </div>
+      <div class="field">
+        <label class="lbl">Email adresa</label>
+        <input type="email" id="email" placeholder="ana@email.hr" />
+        <div class="hint">Na ovaj email dobit ćeš potvrdu narudžbe.</div>
+      </div>
+      <div class="field">
+        <label class="lbl">Broj mobitela</label>
+        <input type="tel" id="tel" placeholder="+385 91 123 4567" />
+      </div>
+    </div>
+
+    <!-- PREGLED -->
+    <div class="card" id="pregled-card">
+      <div class="card-header">
+        <h2 style="font-size:1.2rem;">Pregled narudžbe</h2>
+      </div>
+      <div id="pregled-sadrzaj"></div>
+    </div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="step" id="step-success">
+    <div class="card">
+      <div class="success-screen">
+        <div class="success-icon">🎂</div>
+        <h2>Upit je poslan!</h2>
+        <p>Tvoja slastičarka je primila narudžbu i javit će ti se u roku 24 sata za potvrdu.</p>
+
+        <div class="info-box">
+          <div class="info-row">
+            <span class="ico">📧</span>
+            <span>Provjeri email — poslali smo ti potvrdu s detaljima narudžbe.</span>
+          </div>
+          <div class="info-row">
+            <span class="ico">💸</span>
+            <span>Nakon potvrde, slastičarka će ti poslati podatke za akontaciju (30% iznosa).</span>
+          </div>
+          <div class="info-row">
+            <span class="ico">📅</span>
+            <span>Rok za uplatu akontacije je 24 sata od potvrde.</span>
+          </div>
+          <div class="info-row">
+            <span class="ico">🍰</span>
+            <span>Kad akontacija stigne, torta ulazi u kalendar i počinje se raditi!</span>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="margin-top:24px; width:100%;" onclick="resetApp()">
+          Naruči još jednu tortu
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<!-- FOOTER -->
+<div class="footer-bar" id="footerBar">
+  <div class="footer-inner">
+    <button class="btn btn-ghost" id="backBtn" onclick="prevStep()" disabled>← Natrag</button>
+    <button class="btn btn-primary" id="nextBtn" onclick="nextStep()">Dalje →</button>
+  </div>
+</div>
+
+<script>
+  // ── STATE ──
+  const state = {
+    step: 1,
+    totalSteps: 6,
+    prigoda: '', velicina: '', oblik: '', katovi: '',
+    biskvit: '', krema: '', premaz: '',
+    stil: '', preuzimanje: ''
+  };
+
+  // ── INIT ──
+  const today = new Date();
+  const minDate = new Date(today);
+  minDate.setDate(today.getDate() + 5);
+  document.getElementById('datum').min = minDate.toISOString().split('T')[0];
+
+  // ── OPT SELECTION ──
+  function selectOpt(group, el) {
+    const container = document.getElementById('opts-' + group);
+    if (!container) return;
+    container.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    state[group] = el.textContent.trim();
+  }
+
+  // ── STEP NAVIGATION ──
+  function showStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    const el = document.getElementById('step-' + n);
+    if (el) el.classList.add('active');
+
+    const isSuccess = n === 'success';
+    document.getElementById('footerBar').style.display = isSuccess ? 'none' : '';
+    document.getElementById('stepCounter').textContent = isSuccess ? '' : `Korak ${n} od ${state.totalSteps}`;
+
+    const pct = isSuccess ? 100 : (n / state.totalSteps) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+
+    document.getElementById('backBtn').disabled = n <= 1;
+    document.getElementById('nextBtn').textContent = n === state.totalSteps ? 'Pošalji upit 🎂' : 'Dalje →';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function nextStep() {
+    if (state.step === state.totalSteps) {
+      submitOrder();
+      return;
+    }
+    state.step++;
+    if (state.step === state.totalSteps) buildPregled();
+    showStep(state.step);
+  }
+
+  function prevStep() {
+    if (state.step <= 1) return;
+    state.step--;
+    showStep(state.step);
+  }
+
+  // ── DOSTAVA TOGGLE ──
+  document.getElementById('opts-preuzimanje').addEventListener('click', function(e) {
+    const opt = e.target.closest('.opt');
+    if (!opt) return;
+    const isDostava = opt.textContent.includes('Dostava');
+    document.getElementById('adresa-field').style.display = isDostava ? '' : 'none';
+  });
+
+  // ── BUILD PREGLED ──
+  function buildPregled() {
+    const datum = document.getElementById('datum').value;
+    const datumPrikaz = datum ? new Date(datum).toLocaleDateString('hr-HR', { day:'numeric', month:'long', year:'numeric' }) : '—';
+
+    const rows = [
+      ['Prigoda', state.prigoda || '—'],
+      ['Za koga', document.getElementById('za-koga').value || '—'],
+      ['Veličina', state.velicina || '—'],
+      ['Oblik', state.oblik || '—'],
+      ['Katovi', state.katovi || '—'],
+      ['Biskvit', state.biskvit || '—'],
+      ['Punjenje', state.krema || '—'],
+      ['Premaz', state.premaz || '—'],
+      ['Stil', state.stil || '—'],
+      ['Boje', document.getElementById('boje').value || '—'],
+      ['Natpis', document.getElementById('natpis').value || '—'],
+      ['Datum', datumPrikaz],
+      ['Preuzimanje', state.preuzimanje || '—'],
+    ];
+
+    const napomene = document.getElementById('napomene').value;
+    if (napomene) rows.push(['Napomene', napomene]);
+
+    document.getElementById('pregled-sadrzaj').innerHTML =
+      rows.map(([l, v]) => `
+        <div class="summary-row">
+          <span class="summary-label">${l}</span>
+          <span class="summary-value">${v}</span>
+        </div>
+      `).join('') +
+      `<div class="price-total">
+        <span class="lbl">Okvirna cijena (slastičarka potvrđuje)</span>
+        <span class="amount">~60–90 €</span>
+      </div>`;
+  }
+
+  // ── SUBMIT ──
+  function submitOrder() {
+    const ime = document.getElementById('ime').value.trim();
+    const email = document.getElementById('email').value.trim();
+
+    if (!ime) { alert('Molim upiši svoje ime.'); return; }
+    if (!email || !email.includes('@')) { alert('Molim upiši ispravnu email adresu.'); return; }
+
+    // U pravoj aplikaciji — ovdje ide API poziv prema bazi
+    // Zasad simuliramo uspjeh
+    state.step = 'success';
+    showStep('success');
+  }
+
+  // ── RESET ──
+  function resetApp() {
+    state.step = 1;
+    // Reset svi selekti
+    document.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
+    document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], input[type="date"], textarea').forEach(i => i.value = '');
+    document.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+    Object.keys(state).forEach(k => { if (k !== 'step' && k !== 'totalSteps') state[k] = ''; });
+    showStep(1);
+  }
+
+  // ── INIT ──
+  showStep(1);
+</script>
+</body>
+</html>
