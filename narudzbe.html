@@ -34,7 +34,7 @@
   .badge{font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
   .badge.nova{background:#fdf2dc;color:#a07d2a}.badge.odobrena{background:#e3f0e8;color:var(--green)}
   .badge.odbijena{background:#fbe6e6;color:#b35}.badge.gotova{background:#eee;color:var(--muted)}
-  .badge.upit{background:#efe6f5;color:#7a5a95}
+  .badge.upit{background:#efe6f5;color:#7a5a95}.badge.fwd{background:#e6eef5;color:#4a6e95}
   .o-img{margin:10px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line);display:block}
   .o-img img{width:100%;display:block;max-height:280px;object-fit:cover}
   .o-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:.86rem;margin:10px 0}
@@ -43,22 +43,27 @@
   .o-note{background:var(--blush-soft);border-radius:10px;padding:8px 12px;font-size:.82rem;color:var(--berry);margin:8px 0}
   .o-price{font-weight:700;color:var(--rose-deep)}
   .o-final{font-weight:700;color:var(--green)}
-  .ponuda-box{background:var(--blush-soft);border:1px dashed var(--rose);border-radius:12px;padding:12px;margin:10px 0}
-  .ponuda-box .lab{font-weight:600;color:var(--berry);font-size:.82rem;margin-bottom:6px;display:block}
+  .ponuda-box{background:#f6eefa;border:1px dashed #c8a8da;border-radius:12px;padding:12px;margin:10px 0}
+  .ponuda-box .lab{font-weight:600;color:#7a5a95;font-size:.82rem;margin-bottom:6px;display:block}
   .ponuda-box input,.ponuda-box textarea{width:100%;padding:9px 11px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:.88rem;background:#fff;margin-bottom:8px}
   .ponuda-box textarea{min-height:54px;resize:vertical}
-  .ponuda-box input:focus,.ponuda-box textarea:focus{outline:none;border-color:var(--rose)}
+  .ponuda-box input:focus,.ponuda-box textarea:focus{outline:none;border-color:#a87fc0}
+  .btn-offer{background:#9b6fb8;color:#fff;width:100%}
   .o-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
   .btn{padding:10px 16px;border-radius:11px;font-family:inherit;font-weight:600;font-size:.86rem;cursor:pointer;border:none;transition:.15s}
   .btn-ok{background:var(--green);color:#fff;flex:1}.btn-no{background:#fff;color:#b35;border:1.5px solid #f0d0d0}
-  .btn-done{background:var(--blush);color:var(--berry);flex:1}.btn-save{background:var(--rose);color:#fff;width:100%}
+  .btn-done{background:var(--blush);color:var(--berry);flex:1}
   .btn-call{background:#fff;color:var(--berry);border:1.5px solid var(--line);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
-  .btn-fwd{background:#fff;color:#7a5a95;border:1.5px solid #e0d2ec;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;flex:1}
+  .btn-fwd{background:#fff;color:#4a6e95;border:1.5px solid #cfe0f0;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;flex:1}
   .btn:active{transform:scale(.97)}
-  .fwd-row{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:.84rem;color:var(--berry)}
-  .fwd-row input{width:18px;height:18px;accent-color:var(--rose)}
   .refresh{display:block;margin:0 auto 16px;background:#fff;border:1.5px solid var(--line);color:var(--berry);padding:9px 18px;border-radius:999px;font-family:inherit;font-weight:600;font-size:.85rem;cursor:pointer}
   .refresh:hover{border-color:var(--rose)}
+  .overlay{position:fixed;inset:0;background:rgba(90,80,80,.45);backdrop-filter:blur(3px);display:none;place-items:center;padding:20px;z-index:50}
+  .overlay.show{display:grid}
+  .modal{background:#fff;border-radius:24px;max-width:380px;padding:30px 24px;text-align:center;box-shadow:0 20px 60px rgba(138,74,74,.25)}
+  .modal .emoji{font-size:2.6rem}.modal h3{font-family:'Fraunces',serif;color:var(--berry);font-size:1.35rem;margin:8px 0 8px}
+  .modal p{color:var(--ink);font-size:.92rem;margin-bottom:18px}
+  .m-actions{display:flex;gap:10px}.m-actions .btn{flex:1}
 </style>
 </head>
 <body>
@@ -74,6 +79,16 @@
   <div id="lista"><div class="state">Učitavam narudžbe…</div></div>
 </div>
 
+<div class="overlay" id="fwdModal"><div class="modal">
+  <div class="emoji">📦</div>
+  <h3>Poslati firmi za dekoraciju?</h3>
+  <p>Želite li ovu narudžbu odmah proslijediti firmi <b id="fwdFirma">Topperi</b> (izrada dekoracije)?</p>
+  <div class="m-actions">
+    <button class="btn btn-no" onclick="finalize(false)">Ne, samo odobri</button>
+    <button class="btn btn-ok" onclick="finalize(true)">Da, pošalji</button>
+  </div>
+</div></div>
+
 <script>
 const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
 const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
@@ -82,7 +97,7 @@ const H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'applic
 /* Firma za izradu dekoracija — promijeni u svoju */
 const FIRMA_DEKORACIJE="Topperi";
 
-let SVE=[], filter='nova';
+let SVE=[], filter='nova', fwdId=null;
 function setF(f){filter=f;[...document.querySelectorAll('.filter')].forEach(x=>x.classList.toggle('active',x.dataset.f===f));render();}
 
 async function ucitaj(){
@@ -105,7 +120,7 @@ function esc(s){return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 
 function kartica(o){
   const st=o.status||'nova';
-  const upit = o.slika_url && !o.cijena_finalna;
+  const vlastiti = !!o.slika_url;              // kupac učitao svoj dizajn
   const dod=(o.dodatci&&o.dodatci.length)?o.dodatci.join(', '):'';
   const preuzimanje=o.nacin==='dostava'?('Dostava'+(o.adresa?' → '+o.adresa:'')):('Osobno'+(o.termin?' · '+o.termin:''));
 
@@ -114,7 +129,8 @@ function kartica(o){
   h+='<div class="o-cake">'+(o.okus||'—')+(o.velicina?' · '+o.velicina:'')+'</div>';
   h+='<div class="o-when">Za: '+datumHr(o.datum_proslave)+(o.prigoda?' · '+o.prigoda:'')+'</div>';
   h+='</div><div class="badges"><span class="badge '+st+'">'+st.toUpperCase()+'</span>';
-  if(upit)h+='<span class="badge upit">UPIT ZA CIJENU</span>';
+  if(vlastiti && st==='nova' && !o.cijena_finalna) h+='<span class="badge upit">VLASTITI DIZAJN</span>';
+  if(o.proslijedi_dekorater) h+='<span class="badge fwd">ZA '+FIRMA_DEKORACIJE.toUpperCase()+'</span>';
   h+='</div></div>';
 
   if(o.slika_url) h+='<a class="o-img" href="'+o.slika_url+'" target="_blank"><img src="'+o.slika_url+'" alt="primjer"></a>';
@@ -128,31 +144,28 @@ function kartica(o){
   h+='</div>';
   if(o.alergeni) h+='<div class="o-note">⚠️ '+o.alergeni+'</div>';
   if(o.napomena) h+='<div class="o-note">✍️ '+o.napomena+'</div>';
-  if(o.napomena_slasticar) h+='<div class="o-note">💬 Vaša napomena: '+o.napomena_slasticar+'</div>';
+  if(o.napomena_slasticar) h+='<div class="o-note">💬 Vaša napomena kupcu: '+o.napomena_slasticar+'</div>';
 
-  if(st==='nova'){
+  /* Polje za cijenu — SAMO kod vlastitog dizajna (cijena nije fiksna) */
+  if(st==='nova' && vlastiti){
     h+='<div class="ponuda-box">';
-    h+='<span class="lab">'+(upit?'Pošaljite ponudu za ovaj dizajn':'Finalna cijena (nije obavezno)')+'</span>';
+    h+='<span class="lab">Vlastiti dizajn — dogovorite cijenu s kupcem pa je upišite</span>';
     h+='<input type="number" id="cf-'+o.id+'" placeholder="Finalna cijena €" value="'+(o.cijena_finalna||'')+'">';
     h+='<textarea id="np-'+o.id+'" placeholder="Napomena kupcu (opcionalno)">'+esc(o.napomena_slasticar)+'</textarea>';
-    h+='<button class="btn btn-save" onclick="spremiPonudu(\''+o.id+'\')">Spremi ponudu</button>';
+    h+='<button class="btn btn-offer" onclick="spremiPonudu(\''+o.id+'\')">Spremi cijenu</button>';
     h+='</div>';
   }
 
   h+='<div class="o-actions">';
   if(o.kupac_tel) h+='<a class="btn btn-call" href="tel:'+o.kupac_tel+'">📞 '+o.kupac_tel+'</a>';
   if(st==='nova'){
-    h+='<button class="btn btn-ok" onclick="odobri(\''+o.id+'\')">✓ Odobri</button>';
+    h+='<button class="btn btn-ok" onclick="openForward(\''+o.id+'\')">✓ Odobri</button>';
     h+='<button class="btn btn-no" onclick="postavi(\''+o.id+'\',\'odbijena\')">Odbij</button>';
-    h+='</div>';
-    h+='<div class="fwd-row"><input type="checkbox" id="fwd-'+o.id+'"> Proslijedi firmi '+FIRMA_DEKORACIJE+' (dekoracija)</div>';
   } else if(st==='odobrena'){
     if(o.proslijedi_dekorater) h+='<a class="btn btn-fwd" href="'+mailFirmi(o)+'">✉️ Pošalji firmi '+FIRMA_DEKORACIJE+'</a>';
     h+='<button class="btn btn-done" onclick="postavi(\''+o.id+'\',\'gotova\')">Označi gotovom</button>';
-    h+='</div>';
-  } else { h+='</div>'; }
-
-  h+='</div>';
+  }
+  h+='</div></div>';
   return h;
 }
 function render(){const l=document.getElementById('lista');let r=SVE;
@@ -163,11 +176,12 @@ function render(){const l=document.getElementById('lista');let r=SVE;
 function mailFirmi(o){
   const tijelo='Narudžba dekoracije:%0D%0A'
     +'Prigoda: '+(o.prigoda||'')+'%0D%0A'
-    +'Datum: '+datumHr(o.datum_proslave)+'%0D%0A'
-    +'Slavljenik: '+(o.ime_slavljenika||'')+(o.broj_godina?(' ('+o.broj_godina+')'):'')+'%0D%0A'
+    +'Datum proslave: '+datumHr(o.datum_proslave)+'%0D%0A'
+    +'Slavljenik: '+(o.ime_slavljenika||'')+(o.broj_godina?(' ('+o.broj_godina+' god.)'):'')+'%0D%0A'
     +'Natpis: '+(o.natpis||'')+'%0D%0A'
+    +'Torta: '+(o.okus||'')+(o.velicina?(' · '+o.velicina):'')+'%0D%0A'
     +(o.slika_url?('Primjer (slika): '+o.slika_url+'%0D%0A'):'')
-    +(o.napomena?('Napomena: '+o.napomena+'%0D%0A'):'');
+    +(o.napomena?('Napomena kupca: '+o.napomena+'%0D%0A'):'');
   return 'mailto:?subject='+encodeURIComponent('Narudžba dekoracije — '+FIRMA_DEKORACIJE)+'&body='+tijelo;
 }
 
@@ -182,11 +196,16 @@ async function spremiPonudu(id){
   try{await patch(id,{cijena_finalna:cf?parseFloat(cf):null,napomena_slasticar:np||null});render();}
   catch(e){alert('Greška: '+e.message);console.error(e);}
 }
-async function odobri(id){
-  const fwd=document.getElementById('fwd-'+id);
-  const proslijedi=fwd?fwd.checked:false;
-  try{await patch(id,{status:'odobrena',proslijedi_dekorater:proslijedi});brojevi();render();}
-  catch(e){alert('Greška: '+e.message);console.error(e);}
+/* Odobravanje → skočni prozor za prosljeđivanje firmi */
+function openForward(id){fwdId=id;document.getElementById('fwdFirma').textContent=FIRMA_DEKORACIJE;document.getElementById('fwdModal').classList.add('show');}
+function closeForward(){document.getElementById('fwdModal').classList.remove('show');fwdId=null;}
+async function finalize(send){
+  const id=fwdId; if(!id)return;
+  const o=SVE.find(x=>x.id===id);
+  try{ await patch(id,{status:'odobrena',proslijedi_dekorater:!!send}); }
+  catch(e){alert('Greška: '+e.message);console.error(e);return;}
+  closeForward(); brojevi(); render();
+  if(send && o){ window.location.href=mailFirmi(o); }
 }
 async function postavi(id,status){try{await patch(id,{status});brojevi();render();}catch(e){alert('Greška: '+e.message);console.error(e);}}
 
