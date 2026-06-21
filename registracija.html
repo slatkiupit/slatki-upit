@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registracija — Slatki Upit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{--cream:#fff8f0;--card:#fff;--blush:#fde6ea;--blush-soft:#fbf5ec;--rose:#d88c9a;--rose-deep:#b96b7b;--berry:#8a4a4a;--ink:#5a5050;--muted:#9a8b88;--line:#f0ddd8;--shadow:0 8px 30px rgba(138,74,74,.08);}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Manrope',sans-serif;color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
+    background:radial-gradient(circle at 20% 0%,#fdeef0 0,transparent 50%),radial-gradient(circle at 80% 100%,#fff3e3 0,transparent 50%),var(--cream);}
+  .box{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow);padding:36px 28px;width:100%;max-width:420px}
+  .logo{font-family:'Caveat',cursive;font-size:2rem;color:var(--rose);text-align:center;line-height:1}
+  .subtitle{font-family:'Fraunces',serif;font-size:1.1rem;color:var(--berry);text-align:center;margin:8px 0 6px;font-weight:500}
+  .subtitle2{font-size:.82rem;color:var(--muted);text-align:center;margin-bottom:24px}
+  label{display:block;font-weight:600;color:var(--berry);font-size:.88rem;margin-bottom:6px;margin-top:16px}
+  .hint{font-size:.75rem;color:var(--muted);font-weight:400;margin-left:4px}
+  input{width:100%;padding:13px 14px;border:1.5px solid var(--line);border-radius:12px;font-family:inherit;font-size:.95rem;color:var(--ink);background:#fffdfb;transition:.15s}
+  input:focus{outline:none;border-color:var(--rose);background:#fff;box-shadow:0 0 0 3px rgba(216,140,154,.15)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:400px){.two{grid-template-columns:1fr}}
+  .btn{display:block;width:100%;margin-top:24px;padding:14px;background:var(--rose);color:#fff;border:none;border-radius:14px;font-family:inherit;font-weight:700;font-size:1rem;cursor:pointer;transition:.15s;box-shadow:0 6px 16px rgba(216,140,154,.35)}
+  .btn:hover{background:var(--rose-deep)}.btn:disabled{opacity:.6;cursor:wait}
+  .err{color:#c0556a;font-size:.83rem;margin-top:10px;background:#fdeaec;border-radius:10px;padding:10px 12px;display:none}
+  .err.show{display:block}
+  .link{text-align:center;margin-top:18px;font-size:.85rem;color:var(--muted)}
+  .link a{color:var(--rose);font-weight:600;text-decoration:none}
+  .trial{background:var(--blush-soft);border-radius:12px;padding:14px;font-size:.8rem;color:var(--berry);margin-top:18px;line-height:1.6}
+  .trial strong{font-weight:700}
+  .divider{border:none;border-top:1px solid var(--line);margin:20px 0 4px}
+  /* Success screen */
+  .success{display:none;text-align:center;padding:10px 0}
+  .success .emoji{font-size:3rem;margin-bottom:12px}
+  .success h3{font-family:'Fraunces',serif;color:var(--berry);font-size:1.3rem;margin-bottom:10px}
+  .success p{color:var(--ink);font-size:.9rem;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="logo">Slatki Upit</div>
+  <div class="subtitle">Besplatna registracija</div>
+  <div class="subtitle2">90 dana besplatno · bez kreditne kartice</div>
+
+  <div id="forma">
+    <hr class="divider">
+    <label>Naziv slastičarne</label>
+    <input type="text" id="naziv" placeholder="npr. Slatka Kuća">
+
+    <label>Grad <span class="hint">· u kojem radite</span></label>
+    <input type="text" id="grad" placeholder="npr. Split">
+
+    <hr class="divider">
+
+    <label>E-mail adresa</label>
+    <input type="email" id="email" placeholder="vas@mail.com" autocomplete="email">
+
+    <div class="two">
+      <div>
+        <label>Lozinka</label>
+        <input type="password" id="lozinka" placeholder="Min. 6 znakova" autocomplete="new-password">
+      </div>
+      <div>
+        <label>Potvrdi lozinku</label>
+        <input type="password" id="lozinka2" placeholder="Ponovi lozinku" autocomplete="new-password">
+      </div>
+    </div>
+
+    <button class="btn" id="btn" onclick="registriraj()">Registriraj se besplatno</button>
+    <div class="err" id="err"></div>
+
+    <div class="trial">
+      🎁 <strong>Prvih 90 dana besplatno.</strong> Nakon toga nastavljate uz mjesečnu pretplatu —
+      otkažete kad god želite, bez skrivenih troškova.
+    </div>
+
+    <div class="link">Već imate račun? <a href="prijava.html">Prijavite se</a></div>
+  </div>
+
+  <div class="success" id="success">
+    <div class="emoji">📧</div>
+    <h3>Provjerite e-mail!</h3>
+    <p>Poslali smo vam link za potvrdu na <strong id="sentTo"></strong>.<br><br>
+    Kliknite link u mailu i bit ćete automatski prijavljeni u aplikaciju.<br><br>
+    <span style="font-size:.8rem;color:var(--muted)">Ne vidite mail? Provjerite Spam/Junk mapu.</span></p>
+  </div>
+</div>
+
+<script>
+const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
+const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
+const db=supabase.createClient(SB_URL,SB_KEY);
+
+db.auth.getSession().then(({data:{session}})=>{if(session)window.location.href='narudzbe.html';});
+
+async function registriraj(){
+  const naziv=document.getElementById('naziv').value.trim();
+  const grad=document.getElementById('grad').value.trim();
+  const email=document.getElementById('email').value.trim();
+  const lozinka=document.getElementById('lozinka').value;
+  const lozinka2=document.getElementById('lozinka2').value;
+  const btn=document.getElementById('btn');
+  const err=document.getElementById('err');
+  err.classList.remove('show');
+
+  if(!naziv){err.textContent='Unesite naziv slastičarne.';err.classList.add('show');return;}
+  if(!grad){err.textContent='Unesite grad.';err.classList.add('show');return;}
+  if(!email){err.textContent='Unesite e-mail.';err.classList.add('show');return;}
+  if(lozinka.length<6){err.textContent='Lozinka mora imati najmanje 6 znakova.';err.classList.add('show');return;}
+  if(lozinka!==lozinka2){err.textContent='Lozinke se ne podudaraju.';err.classList.add('show');return;}
+
+  btn.disabled=true;btn.textContent='Registriram...';
+
+  const{error}=await db.auth.signUp({
+    email,password:lozinka,
+    options:{data:{naziv,grad},emailRedirectTo:window.location.origin+'/narudzbe.html'}
+  });
+
+  if(error){
+    btn.disabled=false;btn.textContent='Registriraj se besplatno';
+    err.textContent=error.message==='User already registered'?'Ovaj e-mail je već registriran. Prijavite se.':'Greška: '+error.message;
+    err.classList.add('show');return;
+  }
+  document.getElementById('forma').style.display='none';
+  document.getElementById('sentTo').textContent=email;
+  document.getElementById('success').style.display='block';
+}
+</script>
+</body>
+</html>
