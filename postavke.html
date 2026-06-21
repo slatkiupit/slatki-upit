@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Postavke — Slatki Upit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&family=Caveat:wght@600&family=Playfair+Display:wght@400;600&family=Dancing+Script:wght@600&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--cream:#fff8f0;--card:#fff;--blush:#fde6ea;--blush-soft:#fbf5ec;--rose:#d88c9a;--rose-deep:#b96b7b;--berry:#8a4a4a;--ink:#5a5050;--muted:#9a8b88;--gold:#d4af37;--line:#f0ddd8;--green:#6f9f7e;--shadow:0 8px 30px rgba(138,74,74,.08);--radius:18px;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Manrope',sans-serif;color:var(--ink);background:radial-gradient(circle at 15% 0%,#fdeef0 0,transparent 40%),radial-gradient(circle at 85% 100%,#fff3e3 0,transparent 40%),var(--cream);min-height:100vh;-webkit-font-smoothing:antialiased}
+.wrap{max-width:640px;margin:0 auto;padding:22px 16px 80px}
+
+/* Header */
+.head{text-align:center;margin-bottom:20px}
+.head .tag{font-family:'Caveat',cursive;font-size:1.6rem;color:var(--rose);line-height:1}
+.head h1{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--berry);font-weight:600}
+.head .sub{color:var(--muted);font-size:.85rem;margin-top:2px}
+
+/* Nav */
+.nav{display:flex;gap:6px;margin-bottom:20px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.nav::-webkit-scrollbar{display:none}
+.navlink{flex:0 0 auto;text-align:center;padding:9px 14px;border-radius:12px;font-weight:600;font-size:.82rem;text-decoration:none;border:1.5px solid var(--line);color:var(--muted);background:#fff;transition:.15s;white-space:nowrap}
+.navlink.active{background:var(--rose);color:#fff;border-color:var(--rose)}
+
+/* Section */
+.sect{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
+.sect-title{font-family:'Fraunces',serif;font-weight:600;color:var(--berry);font-size:1.1rem;margin-bottom:4px}
+.sect-hint{color:var(--muted);font-size:.82rem;margin-bottom:16px}
+.mini-label{display:block;font-weight:600;color:var(--berry);font-size:.86rem;margin:14px 0 8px}
+hr.soft{border:none;border-top:1px solid var(--line);margin:16px 0}
+
+/* Inputs */
+input[type=text],input[type=number],input[type=email],textarea,select{width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:11px;font-family:inherit;font-size:.9rem;color:var(--ink);background:#fffdfb;transition:.15s}
+input:focus,textarea:focus,select:focus{outline:none;border-color:var(--rose);background:#fff;box-shadow:0 0 0 3px rgba(216,140,154,.15)}
+textarea{resize:vertical;min-height:60px}
+.row2{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}
+.row3{display:grid;grid-template-columns:1fr 100px auto;gap:8px;align-items:start}
+@media(max-width:420px){.row3{grid-template-columns:1fr 80px auto}}
+
+/* Edit rows */
+.edit-rows{display:flex;flex-direction:column;gap:8px;margin-bottom:10px}
+.edit-row{display:flex;gap:8px;align-items:center}
+.edit-row input{flex:1;min-width:0}
+.edit-row .sm{flex:0 0 90px}
+.del{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--rose-deep);font-size:1.2rem;cursor:pointer;flex:0 0 34px;transition:.15s;display:grid;place-items:center}
+.del:hover{background:var(--blush);border-color:var(--rose)}
+.add-btn{background:var(--blush-soft);border:1.5px dashed var(--rose);color:var(--berry);padding:9px 14px;border-radius:10px;font-family:inherit;font-weight:600;font-size:.84rem;cursor:pointer;width:100%;transition:.15s}
+.add-btn:hover{background:#fceef0}
+
+/* Logo upload */
+.logo-area{display:flex;gap:14px;align-items:center}
+.logo-box{width:80px;height:80px;border-radius:16px;border:2px dashed var(--rose);background:var(--blush-soft);display:grid;place-items:center;cursor:pointer;overflow:hidden;font-size:1.6rem;flex:0 0 80px}
+.logo-box img{width:100%;height:100%;object-fit:cover}
+.logo-info{flex:1;font-size:.82rem;color:var(--muted);line-height:1.5}
+.logo-info strong{color:var(--berry)}
+
+/* Tema grid */
+.tema-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tema-card{border:2px solid var(--line);border-radius:12px;padding:10px 8px;cursor:pointer;text-align:center;transition:.15s}
+.tema-card:hover{border-color:var(--rose)}
+.tema-card.sel{border-color:var(--rose);background:var(--blush)}
+.tema-swatch{height:28px;border-radius:8px;margin-bottom:6px}
+.tema-name{font-size:.72rem;font-weight:600;color:var(--berry)}
+
+/* Font picker */
+.font-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.font-card{border:2px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;transition:.15s;text-align:center}
+.font-card:hover{border-color:var(--rose)}
+.font-card.sel{border-color:var(--rose);background:var(--blush)}
+.font-preview{font-size:1.2rem;color:var(--berry);margin-bottom:4px}
+.font-name{font-size:.72rem;color:var(--muted);font-weight:600}
+
+/* Kolač kategorija */
+.kolac-card{background:var(--blush-soft);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+.kolac-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.kolac-head span{font-weight:700;color:var(--berry);font-size:.9rem}
+.kolac-img{width:100%;height:100px;border-radius:10px;object-fit:cover;display:block;margin-bottom:8px;border:1px solid var(--line)}
+.img-placeholder{width:100%;height:80px;border:1.5px dashed var(--rose);border-radius:10px;display:grid;place-items:center;font-size:.8rem;color:var(--berry);font-weight:600;cursor:pointer;background:#fff;margin-bottom:8px}
+.img-placeholder input{display:none}
+.cijena-row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.cijena-row select{flex:0 0 110px}
+.cijena-row input{flex:1}
+
+/* Toggle */
+.toggle{display:flex;align-items:center;gap:10px;font-weight:600;color:var(--berry);cursor:pointer}
+.switch{width:46px;height:26px;border-radius:999px;background:var(--line);position:relative;transition:.2s;flex:0 0 46px}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.switch.on{background:var(--rose)}.switch.on::after{left:23px}
+
+/* Save bar */
+.save-bar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:12px 20px;display:flex;gap:10px;max-width:640px;margin:0 auto;z-index:50}
+.save-bar{left:50%;transform:translateX(-50%);width:100%}
+.btn-save{flex:1;padding:13px;background:var(--rose);color:#fff;border:none;border-radius:13px;font-family:inherit;font-weight:700;font-size:.95rem;cursor:pointer;box-shadow:0 6px 16px rgba(216,140,154,.35)}
+.btn-save:hover{background:var(--rose-deep)}.btn-save:disabled{opacity:.6;cursor:wait}
+.save-msg{font-size:.82rem;color:var(--green);font-weight:600;display:none;align-items:center;gap:4px}
+.save-msg.show{display:flex}
+
+/* Day chips */
+.dchips{display:flex;flex-wrap:wrap;gap:7px}
+.dchip{padding:7px 12px;border:1.5px solid var(--line);border-radius:999px;background:#fff;font-size:.82rem;font-weight:500;cursor:pointer;transition:.15s}
+.dchip:hover{border-color:var(--rose)}
+.dchip.on{background:var(--blush);border-color:var(--rose);color:var(--berry);font-weight:600}
+
+.badge-proba{display:inline-block;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:999px;background:#fdf2dc;color:#a07d2a;margin-left:8px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="tag">Slatki Upit</div>
+    <h1>Postavke <span class="badge-proba" id="probaBadge" style="display:none"></span></h1>
+    <div class="sub" id="sub">Učitavam...</div>
+  </div>
+
+  <div class="nav">
+    <a class="navlink" href="narudzbe.html">📋 Narudžbe</a>
+    <a class="navlink" href="kalendar.html">📅 Kalendar</a>
+    <a class="navlink active" href="postavke.html">⚙️ Postavke</a>
+    <button onclick="odjava()" style="flex:0 0 auto;padding:9px 14px;border-radius:12px;font-weight:600;font-size:.82rem;background:#fff;color:var(--muted);border:1.5px solid var(--line);cursor:pointer;font-family:inherit;white-space:nowrap">Odjava</button>
+  </div>
+
+  <!-- BRANDING -->
+  <div class="sect">
+    <div class="sect-title">Izgled i branding</div>
+    <div class="sect-hint">Logo, tema boja i font koji kupci vide na vašoj formi za narudžbu.</div>
+
+    <span class="mini-label">Logo slastičarne</span>
+    <div class="logo-area">
+      <label class="logo-box" id="logoBox">
+        <span id="logoIco">🎂</span>
+        <input type="file" accept="image/*" id="logoIn" style="display:none" onchange="uploadLogo(this)">
+      </label>
+      <div class="logo-info"><strong>Kliknite za upload loga</strong><br>PNG ili JPG, preporučeno kvadrat.<br>Prikazuje se na vrhu forme za kupce.</div>
+    </div>
+
+    <hr class="soft">
+    <span class="mini-label">Tema boja</span>
+    <div class="tema-grid" id="temaGrid"></div>
+
+    <hr class="soft">
+    <span class="mini-label">Font naslova</span>
+    <div class="font-grid" id="fontGrid"></div>
+  </div>
+
+  <!-- NAZIV I GRAD -->
+  <div class="sect">
+    <div class="sect-title">Osnovni podaci</div>
+    <div class="sect-hint">Prikazuje se kupcima na stranici za narudžbu.</div>
+    <span class="mini-label">Naziv slastičarne</span>
+    <input type="text" id="naziv" placeholder="npr. Slatka Kuća">
+    <span class="mini-label">Grad</span>
+    <input type="text" id="grad" placeholder="npr. Split">
+    <span class="mini-label">Kratki opis <span style="font-weight:400;color:var(--muted)">· opc.</span></span>
+    <textarea id="opis" placeholder="npr. Ručno rađene torte i kolači s ljubavlju od 2018."></textarea>
+  </div>
+
+  <!-- TORTE -->
+  <div class="sect">
+    <div class="sect-title">🎂 Ponuda — Torte</div>
+    <div class="sect-hint">Što nudite kupcima koji naručuju tortu.</div>
+
+    <span class="mini-label">Veličine i cijene</span>
+    <div class="edit-rows" id="edVelicine"></div>
+
+    <span class="mini-label">Okusi <span style="font-weight:400;color:var(--muted)">· dodajte i sastav ako okus ima neobičan naziv</span></span>
+    <div class="edit-rows" id="edOkusi"></div>
+
+    <span class="mini-label">Vanjski premaz</span>
+    <div class="edit-rows" id="edPremaz"></div>
+
+    <span class="mini-label">Dodatci</span>
+    <div class="edit-rows" id="edDodatci"></div>
+
+    <span class="mini-label">Prigode koje nudite</span>
+    <div class="edit-rows" id="edPrigode"></div>
+  </div>
+
+  <!-- KOLAČI -->
+  <div class="sect">
+    <div class="sect-title">🍰 Ponuda — Kolači i ostalo</div>
+    <div class="sect-hint">Dodajte kategorije kolača, monoporcija i ostalih artikala. Kupac može naručiti samo ovo, ili uz tortu.</div>
+    <div id="kolaci"></div>
+    <button class="add-btn" onclick="dodajKolac()">＋ Dodaj kategoriju (kolači, monoporcije...)</button>
+  </div>
+
+  <!-- PREUZIMANJE I DOSTAVA -->
+  <div class="sect">
+    <div class="sect-title">🚗 Preuzimanje i dostava</div>
+    <div class="sect-hint">Termini osobnog preuzimanja i opcije dostave.</div>
+
+    <span class="mini-label">Termini osobnog preuzimanja</span>
+    <div class="edit-rows" id="edTermini"></div>
+
+    <hr class="soft">
+    <label class="toggle" onclick="toggleDostava()">
+      <span class="switch" id="swDostava"></span> Nudim dostavu
+    </label>
+    <div id="dostavaBlok" style="display:none;margin-top:14px">
+      <span class="mini-label">Dani dostave</span>
+      <div class="dchips" id="daniChips"></div>
+      <span class="mini-label">Vrijeme dostave</span>
+      <input type="text" id="vrijemeDostave" placeholder="npr. 08:00–12:00">
+      <hr class="soft">
+      <label class="toggle" onclick="toggleNaplata()"><span class="switch" id="swNaplata"></span> Naplaćujem dostavu</label>
+      <div id="zoneBlok" style="display:none;margin-top:12px">
+        <span class="mini-label">Cijene dostave po području</span>
+        <div class="edit-rows" id="edZone"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- wrap -->
+
+<div class="save-bar">
+  <div class="save-msg" id="saveMsg">✓ Uspješno spremljeno!</div>
+  <button class="btn-save" id="btnSave" onclick="spremi()">Spremi sve postavke</button>
+</div>
+
+<script>
+const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
+const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
+let H={'apikey':SB_KEY,'Content-Type':'application/json'};
+let SESSION=null, SLASTICAR_ID=null;
+
+// Auth check
+(async()=>{
+  const raw=localStorage.getItem('sb_session');
+  if(!raw){window.location.href='prijava.html';return;}
+  try{SESSION=JSON.parse(raw);}catch(e){window.location.href='prijava.html';return;}
+  if(!SESSION?.access_token){window.location.href='prijava.html';return;}
+  H['Authorization']='Bearer '+SESSION.access_token;
+  await ucitajProfil();
+})();
+
+// Teme
+const TEME=[
+  {naziv:'Neutral',boja:'#f5ede3,#e8d5c4'},
+  {naziv:'Cherry',boja:'#fde6e6,#f5b8b8'},
+  {naziv:'Pinky',boja:'#fde6ea,#f9c5d0'},
+  {naziv:'Pastel Dream',boja:'#e8f0f5,#c5d8e8'},
+  {naziv:'Playful',boja:'#fef3dc,#fde3b8'},
+  {naziv:'Pastel Love',boja:'#f5e8f5,#e8c5e8'},
+  {naziv:'Bluey',boja:'#e8ecf5,#c5cfe8'},
+  {naziv:'Pistachio',boja:'#e8f5ec,#c5e8ce'},
+  {naziv:'Minimalist',boja:'#f5f5f5,#e0e0e0'},
+];
+const FONTOVI=[
+  {naziv:'Fraunces',css:"'Fraunces', serif",preview:'Slatka Kuća'},
+  {naziv:'Playfair Display',css:"'Playfair Display', serif",preview:'Slatka Kuća'},
+  {naziv:'Dancing Script',css:"'Dancing Script', cursive",preview:'Slatka Kuća'},
+  {naziv:'Montserrat',css:"'Montserrat', sans-serif",preview:'Slatka Kuća'},
+];
+
+// Ponuda defaults
+const PONUDA = {
+  branding:{tema:'Pinky',font:'Fraunces',logo_url:null},
+  naziv:'', grad:'', opis:'',
+  velicine:[
+    {naziv:'Promjer 16 / visina 14–15 cm',cijena:'50'},
+    {naziv:'Promjer 20 / visina 15 cm',cijena:'100'},
+    {naziv:'2 kata · donji 22/15 + gornji 16/15 cm',cijena:''}
+  ],
+  okusi:[
+    {naziv:'Vanilija',sastav:'vanilija biskvit, maslac krema'},
+    {naziv:'Čokolada',sastav:'čokoladni biskvit, ganache'},
+  ],
+  premaz:[
+    {naziv:'Maslac krema (buttercream)',doplata:'5'},
+    {naziv:'Fondan',doplata:'8'},
+    {naziv:'Ganache',doplata:''},
+    {naziv:'Šlag',doplata:''},
+  ],
+  dodatci:[
+    {naziv:'Makaroni',doplata:''},
+    {naziv:'Jestivi cvijet',doplata:''},
+    {naziv:'Zlatni listići',doplata:'10'},
+  ],
+  prigode:[
+    {naziv:'Rođendan'},{naziv:'Vjenčanje'},{naziv:'Krštenje / krizma'},
+    {naziv:'Godišnjica'},{naziv:'Baby shower'},{naziv:'Bez posebne prigode'},
+  ],
+  kolaci:[
+    {naziv:'Suhi kolači',tip:'kg',cijena:'25',opis:'',slika_url:null},
+    {naziv:'Kremasti kolači',tip:'kg',cijena:'30',opis:'',slika_url:null},
+    {naziv:'Monoporcije',tip:'kom',cijena:'4',opis:'',slika_url:null},
+  ],
+  termini:[{naziv:'10:00–12:00'},{naziv:'14:00–16:00'},{naziv:'16:00–18:00'}],
+  dostava:{
+    omogucena:false,
+    dani:['Petak','Subota','Nedjelja'],
+    vrijeme:'08:00–12:00',
+    naplata:false,
+    zone:[{naziv:'Grad',cijena:'5'},{naziv:'Okolica (30 km)',cijena:'10'}]
+  }
+};
+
+async function ucitajProfil(){
+  try{
+    const res=await fetch(SB_URL+'/rest/v1/slasticari?select=*&user_id=eq.'+SESSION.user.id,{headers:H});
+    const data=await res.json();
+    if(data&&data[0]){
+      const s=data[0];
+      SLASTICAR_ID=s.id;
+      if(s.naziv) PONUDA.naziv=s.naziv;
+      if(s.grad) PONUDA.grad=s.grad;
+      if(s.ponuda) Object.assign(PONUDA,s.ponuda,{naziv:s.naziv||'',grad:s.grad||''});
+      const dana=Math.ceil((new Date(s.proba_do)-new Date())/(1000*60*60*24));
+      if(s.status==='proba'&&dana>0){
+        const b=document.getElementById('probaBadge');
+        b.textContent='Proba: još '+dana+' dana';b.style.display='inline-block';
+      }
+      document.getElementById('sub').textContent=s.naziv||'Moja slastičarna';
+    }
+  }catch(e){console.warn(e);}
+  initUI();
+}
+
+function initUI(){
+  document.getElementById('naziv').value=PONUDA.naziv||'';
+  document.getElementById('grad').value=PONUDA.grad||'';
+  document.getElementById('opis').value=PONUDA.opis||'';
+
+  // Logo
+  if(PONUDA.branding?.logo_url){
+    const img=document.createElement('img');img.src=PONUDA.branding.logo_url;
+    document.getElementById('logoBox').innerHTML='';document.getElementById('logoBox').appendChild(img);
+  }
+
+  // Teme
+  const tg=document.getElementById('temaGrid');tg.innerHTML='';
+  TEME.forEach(t=>{
+    const boje=t.boja.split(',');
+    const c=document.createElement('div');c.className='tema-card'+(PONUDA.branding?.tema===t.naziv?' sel':'');
+    c.innerHTML=`<div class="tema-swatch" style="background:linear-gradient(135deg,${boje[0]},${boje[1]})"></div><div class="tema-name">${t.naziv}</div>`;
+    c.onclick=()=>{[...tg.children].forEach(x=>x.classList.remove('sel'));c.classList.add('sel');if(!PONUDA.branding)PONUDA.branding={};PONUDA.branding.tema=t.naziv;};
+    tg.appendChild(c);
+  });
+
+  // Fontovi
+  const fg=document.getElementById('fontGrid');fg.innerHTML='';
+  FONTOVI.forEach(f=>{
+    const c=document.createElement('div');c.className='font-card'+(PONUDA.branding?.font===f.naziv?' sel':'');
+    c.innerHTML=`<div class="font-preview" style="font-family:${f.css}">${f.preview}</div><div class="font-name">${f.naziv}</div>`;
+    c.onclick=()=>{[...fg.children].forEach(x=>x.classList.remove('sel'));c.classList.add('sel');if(!PONUDA.branding)PONUDA.branding={};PONUDA.branding.font=f.naziv;};
+    fg.appendChild(c);
+  });
+
+  // Edit sekcije
+  editSekcija('edVelicine',PONUDA.velicine,[{p:'naziv',ph:'npr. Promjer 16 / visina 15 cm'},{p:'cijena',ph:'Cijena €',sm:true}],'＋ Dodaj veličinu');
+  editSekcija('edOkusi',PONUDA.okusi,[{p:'naziv',ph:'Naziv okusa'},{p:'sastav',ph:'Sastav (opc.)'}],'＋ Dodaj okus');
+  editSekcija('edPremaz',PONUDA.premaz,[{p:'naziv',ph:'Naziv premaza'},{p:'doplata',ph:'Doplata €',sm:true}],'＋ Dodaj premaz');
+  editSekcija('edDodatci',PONUDA.dodatci,[{p:'naziv',ph:'Naziv dodatka'},{p:'doplata',ph:'Doplata €',sm:true}],'＋ Dodaj dodatak');
+  editSekcija('edPrigode',PONUDA.prigode,[{p:'naziv',ph:'Naziv prigode'}],'＋ Dodaj prigodu');
+  editSekcija('edTermini',PONUDA.termini,[{p:'naziv',ph:'npr. 10:00–12:00'}],'＋ Dodaj termin');
+  editSekcija('edZone',PONUDA.dostava.zone,[{p:'naziv',ph:'Grad/područje'},{p:'cijena',ph:'Cijena €',sm:true}],'＋ Dodaj područje');
+
+  renderKolaci();
+
+  // Dostava
+  document.getElementById('swDostava').classList.toggle('on',PONUDA.dostava.omogucena);
+  document.getElementById('dostavaBlok').style.display=PONUDA.dostava.omogucena?'block':'none';
+  document.getElementById('swNaplata').classList.toggle('on',PONUDA.dostava.naplata);
+  document.getElementById('zoneBlok').style.display=PONUDA.dostava.naplata?'block':'none';
+  document.getElementById('vrijemeDostave').value=PONUDA.dostava.vrijeme||'';
+
+  // Dani
+  const dc=document.getElementById('daniChips');dc.innerHTML='';
+  ['Ponedjeljak','Utorak','Srijeda','Četvrtak','Petak','Subota','Nedjelja'].forEach(d=>{
+    const el=document.createElement('div');
+    el.className='dchip'+(PONUDA.dostava.dani?.includes(d)?' on':'');el.textContent=d;
+    el.onclick=()=>{
+      const i=PONUDA.dostava.dani?.indexOf(d);
+      if(i>=0){PONUDA.dostava.dani.splice(i,1);el.classList.remove('on');}
+      else{PONUDA.dostava.dani=(PONUDA.dostava.dani||[]);PONUDA.dostava.dani.push(d);el.classList.add('on');}
+    };
+    dc.appendChild(el);
+  });
+}
+
+function editSekcija(id,lista,polja,addLabel){
+  const root=document.getElementById(id);
+  function draw(){
+    root.innerHTML='';
+    lista.forEach((item,idx)=>{
+      const row=document.createElement('div');row.className='edit-row';
+      polja.forEach(f=>{
+        const inp=document.createElement('input');inp.type='text';inp.placeholder=f.ph;inp.value=item[f.p]||'';
+        if(f.sm)inp.style.flex='0 0 90px';
+        inp.oninput=e=>item[f.p]=e.target.value;
+        row.appendChild(inp);
+      });
+      const del=document.createElement('button');del.className='del';del.innerHTML='×';del.title='Obriši';
+      del.onclick=()=>{lista.splice(idx,1);draw();};
+      row.appendChild(del);root.appendChild(row);
+    });
+    const add=document.createElement('button');add.className='add-btn';add.textContent=addLabel;
+    add.onclick=()=>{const o={};polja.forEach(f=>o[f.p]='');lista.push(o);draw();};
+    root.appendChild(add);
+  }
+  draw();
+}
+
+// Kolači
+function renderKolaci(){
+  const c=document.getElementById('kolaci');c.innerHTML='';
+  PONUDA.kolaci.forEach((k,idx)=>{
+    const d=document.createElement('div');d.className='kolac-card';
+    d.innerHTML=`
+      <div class="kolac-head"><span>Kategorija ${idx+1}</span>
+        <button class="del" onclick="this.closest('.kolac-card').remove();PONUDA.kolaci.splice(${idx},1);renderKolaci()">×</button>
+      </div>
+      <input type="text" placeholder="Naziv (npr. Suhi kolači)" value="${k.naziv||''}" oninput="PONUDA.kolaci[${idx}].naziv=this.value" style="margin-bottom:8px">
+      <textarea placeholder="Kratki opis (opc.)" style="min-height:44px;margin-bottom:8px" oninput="PONUDA.kolaci[${idx}].opis=this.value">${k.opis||''}</textarea>
+      <div class="cijena-row">
+        <select onchange="PONUDA.kolaci[${idx}].tip=this.value">
+          <option value="kg" ${k.tip==='kg'?'selected':''}>Cijena / kg</option>
+          <option value="kom" ${k.tip==='kom'?'selected':''}>Cijena / kom</option>
+          <option value="porcija" ${k.tip==='porcija'?'selected':''}>Cijena / porcija</option>
+          <option value="upit" ${k.tip==='upit'?'selected':''}>Po dogovoru</option>
+        </select>
+        <input type="number" placeholder="Cijena €" value="${k.cijena||''}" oninput="PONUDA.kolaci[${idx}].cijena=this.value">
+      </div>
+      <div style="margin-top:10px">
+        ${k.slika_url?`<img class="kolac-img" src="${k.slika_url}" id="kimg-${idx}">`:
+          `<label class="img-placeholder" id="kimg-${idx}">📷 Dodajte fotografiju<input type="file" accept="image/*" onchange="uploadKolacSlika(this,${idx})"></label>`}
+      </div>`;
+    c.appendChild(d);
+  });
+}
+
+function dodajKolac(){
+  PONUDA.kolaci.push({naziv:'',tip:'kg',cijena:'',opis:'',slika_url:null});
+  renderKolaci();
+}
+
+async function uploadKolacSlika(input,idx){
+  const f=input.files[0];if(!f)return;
+  const ext=(f.name.split('.').pop()||'jpg').toLowerCase();
+  const fname='kolac-'+Date.now()+'.'+ext;
+  const res=await fetch(SB_URL+'/storage/v1/object/katalog/'+fname,{
+    method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SESSION.access_token,'Content-Type':f.type,'x-upsert':'true'},body:f
+  });
+  if(res.ok){
+    const url=SB_URL+'/storage/v1/object/public/katalog/'+fname;
+    PONUDA.kolaci[idx].slika_url=url;renderKolaci();
+  }
+}
+
+async function uploadLogo(input){
+  const f=input.files[0];if(!f)return;
+  const ext=(f.name.split('.').pop()||'jpg').toLowerCase();
+  const fname='logo-'+SESSION.user.id+'.'+ext;
+  const res=await fetch(SB_URL+'/storage/v1/object/katalog/'+fname,{
+    method:'POST',headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SESSION.access_token,'Content-Type':f.type,'x-upsert':'true'},body:f
+  });
+  if(res.ok){
+    const url=SB_URL+'/storage/v1/object/public/katalog/'+fname;
+    if(!PONUDA.branding)PONUDA.branding={};PONUDA.branding.logo_url=url;
+    const img=document.createElement('img');img.src=url;
+    const box=document.getElementById('logoBox');box.innerHTML='';box.appendChild(img);
+  }
+}
+
+function toggleDostava(){
+  PONUDA.dostava.omogucena=!PONUDA.dostava.omogucena;
+  document.getElementById('swDostava').classList.toggle('on',PONUDA.dostava.omogucena);
+  document.getElementById('dostavaBlok').style.display=PONUDA.dostava.omogucena?'block':'none';
+}
+function toggleNaplata(){
+  PONUDA.dostava.naplata=!PONUDA.dostava.naplata;
+  document.getElementById('swNaplata').classList.toggle('on',PONUDA.dostava.naplata);
+  document.getElementById('zoneBlok').style.display=PONUDA.dostava.naplata?'block':'none';
+}
+
+async function spremi(){
+  const btn=document.getElementById('btnSave');
+  btn.disabled=true;btn.textContent='Spremam...';
+
+  PONUDA.naziv=document.getElementById('naziv').value.trim();
+  PONUDA.grad=document.getElementById('grad').value.trim();
+  PONUDA.opis=document.getElementById('opis').value.trim();
+  PONUDA.dostava.vrijeme=document.getElementById('vrijemeDostave').value.trim();
+
+  const ponudaZaBazu={
+    branding:PONUDA.branding,
+    opis:PONUDA.opis,
+    velicine:PONUDA.velicine,
+    okusi:PONUDA.okusi,
+    premaz:PONUDA.premaz,
+    dodatci:PONUDA.dodatci,
+    prigode:PONUDA.prigode,
+    kolaci:PONUDA.kolaci,
+    termini:PONUDA.termini,
+    dostava:PONUDA.dostava
+  };
+
+  try{
+    const res=await fetch(SB_URL+'/rest/v1/slasticari?user_id=eq.'+SESSION.user.id,{
+      method:'PATCH',
+      headers:{...H,'Prefer':'return=minimal'},
+      body:JSON.stringify({naziv:PONUDA.naziv,grad:PONUDA.grad,ponuda:ponudaZaBazu})
+    });
+    if(!res.ok)throw new Error(await res.text());
+    const msg=document.getElementById('saveMsg');
+    msg.classList.add('show');
+    setTimeout(()=>msg.classList.remove('show'),3000);
+  }catch(e){alert('Greška pri spremanju: '+e.message);console.error(e);}
+  btn.disabled=false;btn.textContent='Spremi sve postavke';
+}
+
+function odjava(){localStorage.removeItem('sb_session');window.location.href='prijava.html';}
+</script>
+</body>
+</html>
