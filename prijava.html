@@ -7,9 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root{--cream:#fff8f0;--card:#fff;--blush:#fde6ea;--blush-soft:#fbf5ec;--rose:#d88c9a;--rose-deep:#b96b7b;--berry:#8a4a4a;--ink:#5a5050;--muted:#9a8b88;--gold:#d4af37;--line:#f0ddd8;--shadow:0 8px 30px rgba(138,74,74,.08);}
+  :root{--cream:#fff8f0;--card:#fff;--blush:#fde6ea;--blush-soft:#fbf5ec;--rose:#d88c9a;--rose-deep:#b96b7b;--berry:#8a4a4a;--ink:#5a5050;--muted:#9a8b88;--line:#f0ddd8;--shadow:0 8px 30px rgba(138,74,74,.08);}
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Manrope',sans-serif;color:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;
     background:radial-gradient(circle at 20% 0%,#fdeef0 0,transparent 50%),radial-gradient(circle at 80% 100%,#fff3e3 0,transparent 50%),var(--cream);}
@@ -34,25 +33,24 @@
   <div class="subtitle">Prijava slastičarke</div>
 
   <label>E-mail adresa</label>
-  <input type="email" id="email" placeholder="vas@mail.com" autocomplete="email">
+  <input type="email" id="email" placeholder="vas@mail.com">
 
   <label>Lozinka</label>
-  <input type="password" id="lozinka" placeholder="Vaša lozinka" autocomplete="current-password">
+  <input type="password" id="lozinka" placeholder="Vaša lozinka">
 
   <button class="btn" id="btn" onclick="prijavi()">Prijavi se</button>
   <div class="err" id="err"></div>
 
   <div class="link">Nemate račun? <a href="registracija.html">Registrirajte se besplatno</a></div>
-  <div class="trial">🎁 Prvih <strong>90 dana besplatno</strong> — isprobajte sve bez obaveze.</div>
+  <div class="trial">🎁 Prvih <strong>90 dana besplatno</strong> — bez obaveze.</div>
 </div>
 
 <script>
 const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
 const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
-const db=supabase.createClient(SB_URL,SB_KEY);
 
-// Ako je već prijavljena, idi na dashboard
-db.auth.getSession().then(({data:{session}})=>{if(session)window.location.href='narudzbe.html';});
+const sess=localStorage.getItem('sb_session');
+if(sess){try{const s=JSON.parse(sess);if(s&&s.access_token)window.location.href='narudzbe.html';}catch(e){}}
 
 async function prijavi(){
   const email=document.getElementById('email').value.trim();
@@ -62,13 +60,23 @@ async function prijavi(){
   err.classList.remove('show');
   if(!email||!lozinka){err.textContent='Unesite e-mail i lozinku.';err.classList.add('show');return;}
   btn.disabled=true;btn.textContent='Prijavljujem...';
-  const{error}=await db.auth.signInWithPassword({email,password:lozinka});
-  if(error){
+  try{
+    const res=await fetch(SB_URL+'/auth/v1/token?grant_type=password',{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({email,password:lozinka})
+    });
+    const data=await res.json();
+    if(!res.ok||data.error){
+      throw new Error(data.error_description||data.error||data.message||'Pogrešan e-mail ili lozinka.');
+    }
+    localStorage.setItem('sb_session',JSON.stringify(data));
+    window.location.href='narudzbe.html';
+  }catch(e){
     btn.disabled=false;btn.textContent='Prijavi se';
-    err.textContent=error.message==='Invalid login credentials'?'Pogrešan e-mail ili lozinka.':'Greška: '+error.message;
-    err.classList.add('show');return;
+    err.textContent=e.message.includes('Invalid')?'Pogrešan e-mail ili lozinka.':'Greška: '+e.message;
+    err.classList.add('show');
   }
-  window.location.href='narudzbe.html';
 }
 document.addEventListener('keydown',e=>{if(e.key==='Enter')prijavi();});
 </script>
