@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{--cream:#fff8f0;--card:#fff;--blush:#fde6ea;--blush-soft:#fbf5ec;--rose:#d88c9a;--rose-deep:#b96b7b;
     --berry:#8a4a4a;--ink:#5a5050;--muted:#9a8b88;--gold:#d4af37;--line:#f0ddd8;--green:#6f9f7e;--shadow:0 8px 30px rgba(138,74,74,.08);--radius:18px;}
@@ -124,13 +123,13 @@
 <script>
 const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
 const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
-const db=supabase.createClient(SB_URL,SB_KEY);
-let H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
-
+let H={'apikey':SB_KEY,'Content-Type':'application/json'};
 (async()=>{
-  const{data:{session}}=await db.auth.getSession();
-  if(!session){window.location.href='prijava.html';return;}
-  H['Authorization']='Bearer '+session.access_token;
+  const raw=localStorage.getItem('sb_session');
+  if(!raw){window.location.href='prijava.html';return;}
+  try{const s=JSON.parse(raw);if(!s||!s.access_token){window.location.href='prijava.html';return;}
+    H['Authorization']='Bearer '+s.access_token;}
+  catch(e){window.location.href='prijava.html';return;}
   ucitaj();
 })();
 
@@ -234,7 +233,7 @@ async function patch(id,polja){
 async function setBoja(id,b){try{await patch(id,{kalendar_boja:b});render();}catch(e){alert('Greška: '+e.message);}}
 async function oznaci(id){try{await patch(id,{status:'gotova'});renderSummary();render();}catch(e){alert('Greška: '+e.message);}}
 
-async function odjava(){await db.auth.signOut();window.location.href='prijava.html';}
+function odjava(){localStorage.removeItem('sb_session');window.location.href='prijava.html';}
 </script>
 </body>
 </html>
