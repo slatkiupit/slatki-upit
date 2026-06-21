@@ -88,7 +88,6 @@
 const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
 const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
 
-// Provjeri je li već prijavljena
 const sess=localStorage.getItem('sb_session');
 if(sess){try{const s=JSON.parse(sess);if(s&&s.access_token)window.location.href='narudzbe.html';}catch(e){}}
 
@@ -115,15 +114,16 @@ async function registriraj(){
       method:'POST',
       headers:{'apikey':SB_KEY,'Content-Type':'application/json'},
       body:JSON.stringify({
-        email,password:lozinka,
-        data:{naziv,grad},
-        options:{emailRedirectTo:'https://slatki-upit.vercel.app/narudzbe.html'}
+        email:email,
+        password:lozinka,
+        data:{naziv:naziv,grad:grad},
+        redirect_to:'https://slatki-upit.vercel.app/narudzbe.html'
       })
     });
     const data=await res.json();
     if(!res.ok||data.error){
       const msg=data.error||data.msg||data.message||JSON.stringify(data);
-      throw new Error(msg==='User already registered'?'Ovaj e-mail je već registriran.':msg);
+      throw new Error(msg==='User already registered'?'Ovaj e-mail je već registriran. Prijavite se.':msg);
     }
     document.getElementById('forma').style.display='none';
     document.getElementById('sentTo').textContent=email;
