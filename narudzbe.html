@@ -102,32 +102,37 @@
   </div>
 </div></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
 const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
-const db=supabase.createClient(SB_URL,SB_KEY);
-const H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+let H={'apikey':SB_KEY,'Content-Type':'application/json'};
 
-/* ── Auth check ── */
+/* ── Auth check via localStorage ── */
 let SESSION=null;
 (async()=>{
-  const{data:{session}}=await db.auth.getSession();
-  if(!session){window.location.href='prijava.html';return;}
-  SESSION=session;
-  const hdr=document.getElementById('userInfo');
-  if(hdr){
-    const{data:sl}=await db.from('slasticari').select('naziv,proba_do,status').eq('user_id',session.user.id).single();
-    if(sl){
-      hdr.textContent=sl.naziv;
-      const dana=Math.ceil((new Date(sl.proba_do)-new Date())/(1000*60*60*24));
-      if(sl.status==='proba'&&dana>0){
-        document.getElementById('probaBadge').textContent='Proba: još '+dana+' dana';
-        document.getElementById('probaBadge').style.display='inline-block';
+  const raw=localStorage.getItem('sb_session');
+  if(!raw){window.location.href='prijava.html';return;}
+  try{SESSION=JSON.parse(raw);}catch(e){window.location.href='prijava.html';return;}
+  if(!SESSION||!SESSION.access_token){window.location.href='prijava.html';return;}
+  H['Authorization']='Bearer '+SESSION.access_token;
+
+  // Učitaj profil slastičarke
+  try{
+    const res=await fetch(SB_URL+'/rest/v1/slasticari?select=naziv,proba_do,status&user_id=eq.'+SESSION.user.id,{headers:H});
+    if(res.ok){
+      const sl=await res.json();
+      if(sl&&sl[0]){
+        const s=sl[0];
+        const hdr=document.getElementById('userInfo');
+        if(hdr)hdr.textContent=s.naziv;
+        const dana=Math.ceil((new Date(s.proba_do)-new Date())/(1000*60*60*24));
+        if(s.status==='proba'&&dana>0){
+          const b=document.getElementById('probaBadge');
+          if(b){b.textContent='Proba: još '+dana+' dana';b.style.display='inline-block';}
+        }
       }
     }
-  }
-  H['Authorization']='Bearer '+session.access_token;
+  }catch(e){console.warn('Profil greška:',e);}
   ucitaj();
 })();
 
@@ -256,7 +261,7 @@ async function finalize(send){
 async function postavi(id,status){try{await patch(id,{status});brojevi();render();}catch(e){alert('Greška: '+e.message);console.error(e);}}
 
 
-async function odjava(){await db.auth.signOut();window.location.href='prijava.html';}
+function odjava(){localStorage.removeItem('sb_session');window.location.href='prijava.html';}
 </script>
 </body>
 </html>
