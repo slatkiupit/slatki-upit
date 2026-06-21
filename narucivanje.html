@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Narudžba torte — Slatki Upit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#fff8f0;--card:#fff;--blush:#fde6ea;--blush-soft:#fbf5ec;--rose:#d88c9a;--rose-deep:#b96b7b;
+    --berry:#8a4a4a;--ink:#5a5050;--muted:#9a8b88;--gold:#d4af37;--line:#f0ddd8;--shadow:0 8px 30px rgba(138,74,74,.08);--radius:18px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Manrope',sans-serif;color:var(--ink);line-height:1.55;
+    background:radial-gradient(circle at 15% 0%,#fdeef0 0,transparent 45%),radial-gradient(circle at 85% 100%,#fff3e3 0,transparent 45%),var(--cream);
+    min-height:100vh;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:580px;margin:0 auto;padding:24px 18px 60px}
+  .brand{text-align:center;margin-bottom:8px}
+  .brand .tag{font-family:'Caveat',cursive;font-size:1.7rem;color:var(--rose);line-height:1}
+  .brand .shop{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--berry)}
+  .steps{display:flex;align-items:center;justify-content:center;gap:8px;margin:16px 0 20px}
+  .dot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-family:'Fraunces',serif;font-size:.85rem;font-weight:600;background:#fff;border:1.5px solid var(--line);color:var(--muted);transition:.25s}
+  .dot.active{background:var(--rose);border-color:var(--rose);color:#fff}.dot.done{background:var(--blush);border-color:var(--rose);color:var(--rose)}
+  .barx{width:24px;height:2px;background:var(--line);border-radius:2px}.barx.fill{background:var(--rose)}
+  .page{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 20px;display:none}
+  .page.show{display:block;animation:rise .3s ease}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .page h2{font-family:'Fraunces',serif;font-weight:600;color:var(--berry);font-size:1.3rem}
+  .page .sub{color:var(--muted);font-size:.88rem;margin-bottom:16px}
+  .field{margin-bottom:18px}
+  .label{display:block;font-weight:600;color:var(--berry);font-size:.93rem;margin-bottom:9px}
+  .label .opt{font-weight:500;color:var(--muted);font-size:.8rem}
+  .chips{display:flex;flex-wrap:wrap;gap:9px}
+  .chip{display:inline-flex;flex-direction:column;align-items:flex-start;padding:9px 15px;border:1.5px solid var(--line);border-radius:16px;background:#fff;cursor:pointer;transition:.16s}
+  .chip:hover{border-color:var(--rose)}.chip.sel{background:var(--blush);border-color:var(--rose)}
+  .chip-name{font-weight:600;font-size:.9rem;color:var(--ink)}.chip.sel .chip-name{color:var(--berry)}
+  .chip-sub{font-size:.72rem;color:var(--muted);font-weight:500;margin-top:1px}
+  .chip-price{font-size:.76rem;color:var(--rose-deep);font-weight:700;margin-top:1px}
+  input[type=text],input[type=tel],input[type=email],input[type=number],input[type=date],textarea{width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font-family:inherit;font-size:.95rem;color:var(--ink);background:#fffdfb;transition:.15s}
+  input:focus,textarea:focus{outline:none;border-color:var(--rose);background:#fff;box-shadow:0 0 0 3px rgba(216,140,154,.15)}
+  textarea{resize:vertical;min-height:78px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:430px){.two{grid-template-columns:1fr}}
+  .upload{border:1.5px dashed var(--rose);border-radius:14px;padding:16px;text-align:center;background:var(--blush-soft);cursor:pointer;color:var(--berry);font-weight:500}
+  .upload input{display:none}
+  .preview{margin-top:10px;border-radius:12px;max-width:100%;max-height:180px;display:none}
+  .info{background:var(--blush-soft);border-left:3px solid var(--gold);border-radius:10px;padding:12px 14px;font-size:.85rem;color:var(--berry);margin-top:8px}
+  .empty-note{font-size:.85rem;color:var(--muted);background:var(--blush-soft);border:1px dashed var(--line);border-radius:12px;padding:12px;text-align:center}
+  .radio-row{display:flex;gap:10px;flex-wrap:wrap}
+  .radio-card{flex:1;min-width:140px;border:1.5px solid var(--line);border-radius:14px;padding:14px;cursor:pointer;text-align:center;font-weight:600;color:var(--ink);transition:.16s}
+  .radio-card:hover{border-color:var(--rose)}.radio-card.sel{background:var(--blush);border-color:var(--rose);color:var(--berry)}
+  .radio-card small{display:block;font-weight:500;color:var(--muted);font-size:.76rem;margin-top:3px}
+  .summary{background:var(--blush-soft);border-radius:14px;padding:14px 16px;margin-bottom:16px;font-size:.9rem}
+  .summary .row{display:flex;justify-content:space-between;padding:3px 0}
+  .summary .total{border-top:1px dashed var(--line);margin-top:6px;padding-top:8px;font-weight:700;color:var(--berry)}
+  .nav{display:flex;gap:10px;margin-top:6px}
+  .btn{flex:1;padding:14px;border-radius:14px;font-family:inherit;font-size:.96rem;font-weight:600;cursor:pointer;border:none;transition:.16s}
+  .btn-primary{background:var(--rose);color:#fff;box-shadow:0 6px 16px rgba(216,140,154,.35)}
+  .btn-primary:hover{background:var(--rose-deep)}.btn-primary:disabled{opacity:.6;cursor:wait}
+  .btn-ghost{background:#fff;color:var(--berry);border:1.5px solid var(--line);flex:0 0 auto;padding:14px 22px}
+  .err{color:#c0556a;font-size:.82rem;margin-top:6px;display:none}.err.show{display:block}
+  .submit-err{background:#fdeaec;color:#a33;border-radius:10px;padding:12px;font-size:.85rem;margin-top:10px;display:none}
+  .overlay{position:fixed;inset:0;background:rgba(90,80,80,.45);backdrop-filter:blur(3px);display:none;place-items:center;padding:20px;z-index:50}
+  .overlay.show{display:grid}
+  .modal{background:#fff;border-radius:24px;max-width:380px;padding:32px 24px;text-align:center;box-shadow:0 20px 60px rgba(138,74,74,.25);animation:pop .35s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+  .modal .emoji{font-size:3rem}.modal h3{font-family:'Fraunces',serif;color:var(--berry);font-size:1.5rem;margin:8px 0 10px}
+  .modal .fine{font-size:.83rem;color:var(--muted);background:var(--blush-soft);border-radius:12px;padding:12px;margin-top:14px}.modal .btn{margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand"><div class="tag">Slatki Upit</div><div class="shop" id="shop"></div></div>
+  <div class="steps">
+    <div class="dot active" id="d1">1</div><div class="barx" id="b1"></div>
+    <div class="dot" id="d2">2</div><div class="barx" id="b2"></div>
+    <div class="dot" id="d3">3</div>
+  </div>
+
+  <section class="page show" id="p1">
+    <h2>Vaša torta</h2><p class="sub">Odaberite osnovu torte.</p>
+    <div class="field"><span class="label">Okus</span><div class="chips" id="cOkusi"></div><div class="err" id="e-okus">Odaberite okus.</div></div>
+    <div class="field"><span class="label">Veličina</span><div class="chips" id="cVelicine"></div><div class="err" id="e-velicina">Odaberite veličinu.</div></div>
+    <div class="field"><span class="label">Vanjski premaz</span><div class="chips" id="cPremaz"></div><div class="err" id="e-premaz">Odaberite premaz.</div></div>
+    <div class="field"><span class="label">Dodatci <span class="opt">· može više</span></span><div class="chips" id="cDodatci"></div></div>
+    <div class="field"><span class="label">Posebna napomena / alergeni <span class="opt">· opc.</span></span><textarea id="alergeni" placeholder="npr. bez orašastih plodova…"></textarea></div>
+    <div class="nav"><button class="btn btn-primary" onclick="next(1)">Dalje</button></div>
+  </section>
+
+  <section class="page" id="p2">
+    <h2>Prigoda i izgled</h2><p class="sub">Za koga je torta i kako bi trebala izgledati.</p>
+    <div class="field"><span class="label">Prigoda</span><div class="chips" id="cPrigode"></div><div class="err" id="e-prigoda">Odaberite prigodu.</div></div>
+    <div class="field"><span class="label">Inspiracija iz kataloga</span><div class="empty-note">Katalog primjera dodajemo u sljedećem koraku.</div></div>
+    <div class="field"><span class="label">Vaš primjer <span class="opt">· opc.</span></span>
+      <label class="upload">📷 Učitajte fotografiju željenog izgleda<input type="file" accept="image/*" onchange="prev(this)"></label>
+      <img class="preview" id="prevImg">
+      <div class="info">Ako dizajn zahtijeva složeniju dekoraciju (fondan, cvijeće, figurice…), nakon narudžbe dobivate ponudu s konačnom cijenom.</div>
+    </div>
+    <div class="nav"><button class="btn btn-ghost" onclick="go(1)">Natrag</button><button class="btn btn-primary" onclick="next(2)">Dalje</button></div>
+  </section>
+
+  <section class="page" id="p3">
+    <h2>Detalji i podaci</h2><p class="sub">Još samo nekoliko podataka.</p>
+    <div class="field"><span class="label">Datum proslave</span><input type="date" id="datum"><div class="err" id="e-datum">Unesite datum.</div></div>
+    <div class="two">
+      <div class="field"><span class="label">Ime slavljenika <span class="opt">· opc.</span></span><input type="text" id="slavljenik" placeholder="npr. Ana"></div>
+      <div class="field"><span class="label">Broj godina <span class="opt">· opc.</span></span><input type="number" id="godine" min="0" placeholder="npr. 7"></div>
+    </div>
+    <div class="field"><span class="label">Natpis po želji <span class="opt">· opc.</span></span><input type="text" id="natpis" placeholder="npr. Sretan rođendan, Ana!"></div>
+    <hr style="border:none;border-top:1px solid var(--line);margin:4px 0 18px">
+    <div class="field"><span class="label">Ime i prezime</span><input type="text" id="kIme" placeholder="Vaše ime i prezime"><div class="err" id="e-ime">Unesite ime.</div></div>
+    <div class="two">
+      <div class="field"><span class="label">Kontakt broj</span><input type="tel" id="kTel" placeholder="09x xxx xxxx"><div class="err" id="e-tel">Unesite broj.</div></div>
+      <div class="field"><span class="label">E-mail</span><input type="email" id="kMail" placeholder="vas@mail.com"><div class="err" id="e-mail">Unesite e-mail.</div></div>
+    </div>
+    <div class="field"><span class="label">Način preuzimanja</span><div class="radio-row" id="cNacin"></div><div class="err" id="e-nacin">Odaberite način.</div></div>
+    <div class="field" id="boxPreuzimanje" style="display:none"><span class="label">Termin preuzimanja</span><div class="chips" id="cTermini"></div><div class="err" id="e-termin">Odaberite termin.</div></div>
+    <div class="field" id="boxDostava" style="display:none">
+      <div class="info" style="margin-bottom:14px" id="dostInfo"></div>
+      <span class="label">Adresa dostave</span><input type="text" id="adresa" placeholder="Ulica i broj, mjesto"><div class="err" id="e-adresa">Unesite adresu.</div>
+      <span class="label" style="margin-top:14px">Dodatna napomena <span class="opt">· opc.</span></span><textarea id="dostNap" placeholder="Imate li još koji upit ili napomenu?"></textarea>
+    </div>
+    <div class="summary" id="summary"></div>
+    <div class="nav"><button class="btn btn-ghost" onclick="go(2)">Natrag</button><button class="btn btn-primary" id="btnSend" onclick="posalji()">Potvrdi narudžbu</button></div>
+    <div class="submit-err" id="submitErr"></div>
+  </section>
+</div>
+
+<div class="overlay" id="overlay"><div class="modal">
+  <div class="emoji">🎂</div><h3>Hvala na narudžbi!</h3>
+  <p>Vaš upit je zaprimljen. Slastičarna će vam u najkraćem mogućem roku poslati potvrdu narudžbe.</p>
+  <div class="fine">Ako dizajn zahtijeva dodatnu dekoraciju, uz potvrdu ćete dobiti i ponudu s konačnom cijenom.</div>
+  <button class="btn btn-primary" onclick="location.reload()">U redu</button>
+</div></div>
+
+<script>
+/* ===== Supabase ===== */
+const SB_URL = "https://mchaukfsckusovutsovr.supabase.co";
+const SB_KEY = "sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
+
+/* ===== Ponuda (privremeno ovdje; kasnije se učitava iz baze po slastičaru) ===== */
+const PONUDA = {
+  naziv:"Slatka Kuća",
+  velicine:[
+    {naziv:"Promjer 16 / visina 14–15 cm", cijena:"50"},
+    {naziv:"Promjer 16 / visina 20 cm", cijena:"80"},
+    {naziv:"Promjer 18 / visina 20 cm", cijena:"100"},
+    {naziv:"Promjer 20 / visina 15 cm", cijena:"100"},
+    {naziv:"Promjer 22 / visina 15 cm", cijena:"110"},
+    {naziv:"2 kata · donji 22/15 + gornji 16/15 cm", cijena:""}
+  ],
+  okusi:[
+    {naziv:"Vanilija", sastav:"vanilija biskvit, maslac krema"},
+    {naziv:"Čokolada", sastav:"čokoladni biskvit, ganache"},
+    {naziv:"Šumsko voće", sastav:"vanilija biskvit, krema od šumskog voća"},
+    {naziv:"Snickers", sastav:"čokolada, karamela, kikiriki"},
+    {naziv:"Raffaello", sastav:"kokos, bademi, mascarpone"}
+  ],
+  premaz:[{naziv:"Maslac krema (buttercream)",doplata:"5"},{naziv:"Fondan",doplata:"8"},{naziv:"Ganache",doplata:""},{naziv:"Šlag",doplata:""}],
+  dodatci:[{naziv:"Makaroni",doplata:""},{naziv:"Jestivi cvijet",doplata:""},{naziv:"Zlatni listići",doplata:"10"},{naziv:"Svjećice / brojevi",doplata:""}],
+  prigode:[{naziv:"Rođendan"},{naziv:"Vjenčanje"},{naziv:"Krštenje / krizma"},{naziv:"Godišnjica"},{naziv:"Bez posebne prigode"}],
+  termini:[{naziv:"10:00–12:00"},{naziv:"14:00–16:00"},{naziv:"16:00–18:00"}],
+  dostava:{omogucena:true,dani:["Petak","Subota","Nedjelja"],vrijeme:"08:00–12:00",naplata:true,
+    zone:[{naziv:"Split",cijena:"5"},{naziv:"U krugu 30 km od Splita",cijena:"10"}]}
+};
+
+const stanje={okus:null,velicina:null,premaz:null,dodatci:[],prigoda:null,nacin:null,termin:null};
+document.getElementById('shop').textContent=PONUDA.naziv;
+
+function richChips(id,items,key,subFn,multi){
+  const c=document.getElementById(id);c.innerHTML='';
+  items.forEach(item=>{if(!item.naziv)return;
+    const el=document.createElement('div');el.className='chip';
+    const nm=document.createElement('span');nm.className='chip-name';nm.textContent=item.naziv;el.appendChild(nm);
+    const s=subFn?subFn(item):null;
+    if(s&&s.text){const sp=document.createElement('span');sp.className=s.price?'chip-price':'chip-sub';sp.textContent=s.text;el.appendChild(sp);}
+    el.onclick=()=>{if(multi){el.classList.toggle('sel');
+        if(el.classList.contains('sel'))stanje[key].push(item.naziv);else stanje[key]=stanje[key].filter(x=>x!==item.naziv);}
+      else{stanje[key]=item.naziv;[...c.children].forEach(x=>x.classList.remove('sel'));el.classList.add('sel');}
+      renderSummary();};
+    c.appendChild(el);});
+}
+richChips('cOkusi',PONUDA.okusi,'okus',i=>i.sastav?{text:i.sastav}:null,false);
+richChips('cVelicine',PONUDA.velicine,'velicina',i=>i.cijena?{text:i.cijena+' €',price:true}:null,false);
+richChips('cPremaz',PONUDA.premaz,'premaz',i=>i.doplata?{text:'+'+i.doplata+' €',price:true}:null,false);
+richChips('cDodatci',PONUDA.dodatci,'dodatci',i=>i.doplata?{text:'+'+i.doplata+' €',price:true}:null,true);
+richChips('cPrigode',PONUDA.prigode,'prigoda',null,false);
+richChips('cTermini',PONUDA.termini,'termin',null,false);
+
+/* način preuzimanja */
+const n=document.getElementById('cNacin');
+const op=[{k:'preuzimanje',t:'Osobno preuzimanje',s:'u slastičarni'}];
+if(PONUDA.dostava.omogucena)op.push({k:'dostava',t:'Dostava',s:PONUDA.dostava.naplata?'naplaćuje se':'besplatno'});
+op.forEach(o=>{const el=document.createElement('div');el.className='radio-card';el.innerHTML=o.t+'<small>'+o.s+'</small>';
+  el.onclick=()=>{stanje.nacin=o.k;stanje.termin=null;[...n.children].forEach(x=>x.classList.remove('sel'));el.classList.add('sel');
+    document.getElementById('boxPreuzimanje').style.display=o.k==='preuzimanje'?'block':'none';
+    document.getElementById('boxDostava').style.display=o.k==='dostava'?'block':'none';
+    [...document.querySelectorAll('#cTermini .chip')].forEach(x=>x.classList.remove('sel'));renderSummary();};
+  n.appendChild(el);});
+(function(){const d=PONUDA.dostava;
+  document.getElementById('dostInfo').textContent='Dostava: '+d.dani.join(', ')+' · '+d.vrijeme+(d.naplata?' · naplaćuje se dodatno':' · besplatno');})();
+
+/* cijena */
+function cijenaVelicine(){const v=PONUDA.velicine.find(x=>x.naziv===stanje.velicina);return v&&v.cijena?+v.cijena:0;}
+function cijenaPremaz(){const p=PONUDA.premaz.find(x=>x.naziv===stanje.premaz);return p&&p.doplata?+p.doplata:0;}
+function cijenaDodatci(){return stanje.dodatci.reduce((s,nm)=>{const d=PONUDA.dodatci.find(x=>x.naziv===nm);return s+(d&&d.doplata?+d.doplata:0);},0);}
+function ukupno(){return cijenaVelicine()+cijenaPremaz()+cijenaDodatci();}
+function renderSummary(){
+  const s=document.getElementById('summary');if(!stanje.velicina){s.innerHTML='';return;}
+  let h='';
+  if(cijenaVelicine())h+='<div class="row"><span>Torta</span><span>'+cijenaVelicine()+' €</span></div>';
+  if(cijenaPremaz())h+='<div class="row"><span>Premaz</span><span>+'+cijenaPremaz()+' €</span></div>';
+  if(cijenaDodatci())h+='<div class="row"><span>Dodatci</span><span>+'+cijenaDodatci()+' €</span></div>';
+  if(h)h+='<div class="row total"><span>Okvirno</span><span>'+ukupno()+' €</span></div>';
+  s.innerHTML=h;
+}
+
+/* navigacija */
+function go(nn){[1,2,3].forEach(i=>document.getElementById('p'+i).classList.remove('show'));
+  document.getElementById('p'+nn).classList.add('show');
+  for(let i=1;i<=3;i++){const d=document.getElementById('d'+i);d.classList.remove('active','done');
+    if(i<nn)d.classList.add('done');else if(i===nn)d.classList.add('active');}
+  document.getElementById('b1').classList.toggle('fill',nn>1);document.getElementById('b2').classList.toggle('fill',nn>2);
+  window.scrollTo({top:0,behavior:'smooth'});}
+function showErr(id,on){document.getElementById(id).classList.toggle('show',on);}
+function next(from){
+  if(from===1){const a=!stanje.okus,b=!stanje.velicina,c=!stanje.premaz;showErr('e-okus',a);showErr('e-velicina',b);showErr('e-premaz',c);if(a||b||c)return;go(2);}
+  else if(from===2){const a=!stanje.prigoda;showErr('e-prigoda',a);if(a)return;go(3);}
+}
+function prev(input){const f=input.files[0];if(!f)return;const img=document.getElementById('prevImg');img.src=URL.createObjectURL(f);img.style.display='block';}
+
+/* ===== SLANJE U BAZU ===== */
+async function posalji(){
+  const datum=document.getElementById('datum').value,im=document.getElementById('kIme').value.trim(),
+        tel=document.getElementById('kTel').value.trim(),mail=document.getElementById('kMail').value.trim();
+  let ok=true;
+  showErr('e-datum',!datum);if(!datum)ok=false; showErr('e-ime',!im);if(!im)ok=false;
+  showErr('e-tel',!tel);if(!tel)ok=false; showErr('e-mail',!mail);if(!mail)ok=false;
+  showErr('e-nacin',!stanje.nacin);if(!stanje.nacin)ok=false;
+  if(stanje.nacin==='preuzimanje'){showErr('e-termin',!stanje.termin);if(!stanje.termin)ok=false;}
+  let adresa='';
+  if(stanje.nacin==='dostava'){adresa=document.getElementById('adresa').value.trim();showErr('e-adresa',!adresa);if(!adresa)ok=false;}
+  if(!ok){window.scrollTo({top:0,behavior:'smooth'});return;}
+
+  const btn=document.getElementById('btnSend');btn.disabled=true;btn.textContent='Šaljem…';
+  const errBox=document.getElementById('submitErr');errBox.style.display='none';
+
+  const narudzba={
+    okus:stanje.okus, velicina:stanje.velicina, premaz:stanje.premaz,
+    dodatci:stanje.dodatci, alergeni:document.getElementById('alergeni').value.trim()||null,
+    prigoda:stanje.prigoda,
+    datum_proslave:datum, ime_slavljenika:document.getElementById('slavljenik').value.trim()||null,
+    broj_godina:document.getElementById('godine').value?parseInt(document.getElementById('godine').value):null,
+    natpis:document.getElementById('natpis').value.trim()||null,
+    kupac_ime:im, kupac_tel:tel, kupac_mail:mail,
+    nacin:stanje.nacin, termin:stanje.termin,
+    adresa:adresa||null, napomena:document.getElementById('dostNap').value.trim()||null,
+    cijena_okvirna:ukupno()||null
+  };
+
+  try{
+    const res=await fetch(SB_URL+'/rest/v1/narudzbe',{
+      method:'POST',
+      headers:{
+        'apikey':SB_KEY,
+        'Authorization':'Bearer '+SB_KEY,
+        'Content-Type':'application/json',
+        'Prefer':'return=minimal'
+      },
+      body:JSON.stringify(narudzba)
+    });
+    if(!res.ok){
+      const t=await res.text();
+      throw new Error(t||('HTTP '+res.status));
+    }
+  }catch(e){
+    btn.disabled=false;btn.textContent='Potvrdi narudžbu';
+    errBox.style.display='block';
+    errBox.textContent='Greška pri slanju: '+e.message;
+    console.error(e);
+    return;
+  }
+  document.getElementById('overlay').classList.add('show');
+}
+</script>
+</body>
+</html>
