@@ -1,6 +1,25 @@
 <!DOCTYPE html>
 <html lang="hr">
-<head>
+<head><script>
+(function(){
+  const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
+  const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
+  const hash=window.location.hash;
+  if(hash&&hash.includes('access_token=')){
+    const params=new URLSearchParams(hash.substring(1));
+    const token=params.get('access_token');
+    const refresh=params.get('refresh_token');
+    if(token){
+      fetch(SB_URL+'/auth/v1/user',{headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}})
+        .then(r=>r.json()).then(user=>{
+          localStorage.setItem('sb_session',JSON.stringify({access_token:token,refresh_token:refresh,user}));
+          window.location.href='narudzbe.html';
+        }).catch(()=>window.location.href='narudzbe.html');
+    }
+  }
+})();
+</script>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kalendar — Slatki Upit</title>
