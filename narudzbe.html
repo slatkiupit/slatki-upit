@@ -12,70 +12,64 @@
     --berry:#8a4a4a;--ink:#5a5050;--muted:#9a8b88;--gold:#d4af37;--line:#f0ddd8;--green:#6f9f7e;--shadow:0 8px 30px rgba(138,74,74,.08);--radius:18px;}
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Manrope',sans-serif;color:var(--ink);line-height:1.5;
-    background:radial-gradient(circle at 15% 0%,#fdeef0 0,transparent 40%),radial-gradient(circle at 85% 100%,#fff3e3 0,transparent 40%),var(--cream);
-    min-height:100vh;-webkit-font-smoothing:antialiased}
+    background:radial-gradient(circle at 15% 0%,#fdeef0 0,transparent 40%),radial-gradient(circle at 85% 100%,#fff3e3 0,transparent 40%),var(--cream);min-height:100vh;-webkit-font-smoothing:antialiased}
   .wrap{max-width:640px;margin:0 auto;padding:22px 16px 60px}
   .head{text-align:center;margin-bottom:18px}
   .head .tag{font-family:'Caveat',cursive;font-size:1.6rem;color:var(--rose);line-height:1}
   .head h1{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--berry);font-weight:600}
   .head .sub{color:var(--muted);font-size:.85rem;margin-top:2px}
-
   .filters{display:flex;gap:8px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px;box-shadow:var(--shadow);margin-bottom:18px}
   .filter{flex:1;text-align:center;padding:9px 6px;border-radius:999px;font-weight:600;font-size:.84rem;color:var(--muted);cursor:pointer;transition:.18s;white-space:nowrap}
   .filter.active{background:var(--rose);color:#fff}
   .filter .count{display:inline-block;min-width:18px;padding:0 5px;margin-left:3px;border-radius:999px;background:rgba(0,0,0,.08);font-size:.72rem}
   .filter.active .count{background:rgba(255,255,255,.3)}
-
   .state{text-align:center;color:var(--muted);padding:40px 20px;font-size:.92rem}
-
   .order{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);padding:18px;margin-bottom:14px;border-left:5px solid var(--line)}
-  .order.nova{border-left-color:var(--gold)}
-  .order.odobrena{border-left-color:var(--green)}
-  .order.odbijena{border-left-color:#d99}
-  .order.gotova{border-left-color:var(--muted);opacity:.75}
+  .order.nova{border-left-color:var(--gold)}.order.odobrena{border-left-color:var(--green)}
+  .order.odbijena{border-left-color:#d99}.order.gotova{border-left-color:var(--muted);opacity:.78}
   .o-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px}
   .o-cake{font-family:'Fraunces',serif;font-weight:600;color:var(--berry);font-size:1.08rem}
   .o-when{font-size:.82rem;color:var(--muted);margin-top:2px}
+  .badges{display:flex;flex-direction:column;gap:5px;align-items:flex-end}
   .badge{font-size:.72rem;font-weight:700;padding:4px 10px;border-radius:999px;white-space:nowrap}
-  .badge.nova{background:#fdf2dc;color:#a07d2a}
-  .badge.odobrena{background:#e3f0e8;color:var(--green)}
-  .badge.odbijena{background:#fbe6e6;color:#b35}
-  .badge.gotova{background:#eee;color:var(--muted)}
-
+  .badge.nova{background:#fdf2dc;color:#a07d2a}.badge.odobrena{background:#e3f0e8;color:var(--green)}
+  .badge.odbijena{background:#fbe6e6;color:#b35}.badge.gotova{background:#eee;color:var(--muted)}
+  .badge.upit{background:#efe6f5;color:#7a5a95}
+  .o-img{margin:10px 0;border-radius:12px;overflow:hidden;border:1px solid var(--line);display:block}
+  .o-img img{width:100%;display:block;max-height:280px;object-fit:cover}
   .o-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;font-size:.86rem;margin:10px 0}
   @media(max-width:430px){.o-grid{grid-template-columns:1fr}}
-  .o-grid .k{color:var(--muted)}
-  .o-grid .v{color:var(--ink);font-weight:500}
+  .o-grid .k{color:var(--muted)}.o-grid .v{color:var(--ink);font-weight:500}
   .o-note{background:var(--blush-soft);border-radius:10px;padding:8px 12px;font-size:.82rem;color:var(--berry);margin:8px 0}
   .o-price{font-weight:700;color:var(--rose-deep)}
-
+  .o-final{font-weight:700;color:var(--green)}
+  .ponuda-box{background:var(--blush-soft);border:1px dashed var(--rose);border-radius:12px;padding:12px;margin:10px 0}
+  .ponuda-box .lab{font-weight:600;color:var(--berry);font-size:.82rem;margin-bottom:6px;display:block}
+  .ponuda-box input,.ponuda-box textarea{width:100%;padding:9px 11px;border:1.5px solid var(--line);border-radius:10px;font-family:inherit;font-size:.88rem;background:#fff;margin-bottom:8px}
+  .ponuda-box textarea{min-height:54px;resize:vertical}
+  .ponuda-box input:focus,.ponuda-box textarea:focus{outline:none;border-color:var(--rose)}
   .o-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
   .btn{padding:10px 16px;border-radius:11px;font-family:inherit;font-weight:600;font-size:.86rem;cursor:pointer;border:none;transition:.15s}
-  .btn-ok{background:var(--green);color:#fff;flex:1}
-  .btn-no{background:#fff;color:#b35;border:1.5px solid #f0d0d0}
-  .btn-done{background:var(--blush);color:var(--berry);flex:1}
+  .btn-ok{background:var(--green);color:#fff;flex:1}.btn-no{background:#fff;color:#b35;border:1.5px solid #f0d0d0}
+  .btn-done{background:var(--blush);color:var(--berry);flex:1}.btn-save{background:var(--rose);color:#fff;width:100%}
   .btn-call{background:#fff;color:var(--berry);border:1.5px solid var(--line);text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+  .btn-fwd{background:#fff;color:#7a5a95;border:1.5px solid #e0d2ec;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;flex:1}
   .btn:active{transform:scale(.97)}
-
+  .fwd-row{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:.84rem;color:var(--berry)}
+  .fwd-row input{width:18px;height:18px;accent-color:var(--rose)}
   .refresh{display:block;margin:0 auto 16px;background:#fff;border:1.5px solid var(--line);color:var(--berry);padding:9px 18px;border-radius:999px;font-family:inherit;font-weight:600;font-size:.85rem;cursor:pointer}
   .refresh:hover{border-color:var(--rose)}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="head">
-    <div class="tag">Slatki Upit</div>
-    <h1>Narudžbe</h1>
-    <div class="sub" id="sub">Učitavam…</div>
-  </div>
-
-  <div class="filters" id="filters">
+  <div class="head"><div class="tag">Slatki Upit</div><h1>Narudžbe</h1><div class="sub" id="sub">Učitavam…</div></div>
+  <div class="filters">
     <div class="filter active" data-f="nova" onclick="setF('nova')">Nove <span class="count" id="c-nova">0</span></div>
     <div class="filter" data-f="odobrena" onclick="setF('odobrena')">Odobrene <span class="count" id="c-odobrena">0</span></div>
     <div class="filter" data-f="gotova" onclick="setF('gotova')">Gotove <span class="count" id="c-gotova">0</span></div>
     <div class="filter" data-f="sve" onclick="setF('sve')">Sve</div>
   </div>
-
   <button class="refresh" onclick="ucitaj()">↻ Osvježi</button>
   <div id="lista"><div class="state">Učitavam narudžbe…</div></div>
 </div>
@@ -85,8 +79,10 @@ const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
 const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
 const H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
 
-let SVE=[], filter='nova';
+/* Firma za izradu dekoracija — promijeni u svoju */
+const FIRMA_DEKORACIJE="Topperi";
 
+let SVE=[], filter='nova';
 function setF(f){filter=f;[...document.querySelectorAll('.filter')].forEach(x=>x.classList.toggle('active',x.dataset.f===f));render();}
 
 async function ucitaj(){
@@ -96,78 +92,103 @@ async function ucitaj(){
     if(!res.ok)throw new Error(await res.text());
     SVE=await res.json();
     document.getElementById('sub').textContent=SVE.length+' narudžbi ukupno';
-    brojevi(); render();
-  }catch(e){
-    document.getElementById('lista').innerHTML='<div class="state">Greška pri učitavanju.<br>'+e.message+'</div>';
-    console.error(e);
-  }
+    brojevi();render();
+  }catch(e){document.getElementById('lista').innerHTML='<div class="state">Greška pri učitavanju.<br>'+e.message+'</div>';console.error(e);}
 }
-
-function brojevi(){
-  const c=s=>SVE.filter(o=>(o.status||'nova')===s).length;
+function brojevi(){const c=s=>SVE.filter(o=>(o.status||'nova')===s).length;
   document.getElementById('c-nova').textContent=c('nova');
   document.getElementById('c-odobrena').textContent=c('odobrena');
-  document.getElementById('c-gotova').textContent=c('gotova');
-}
-
+  document.getElementById('c-gotova').textContent=c('gotova');}
 function red(k,v){return v?'<div class="k">'+k+'</div><div class="v">'+v+'</div>':'';}
 function datumHr(d){if(!d)return '';const p=d.split('-');return p[2]+'.'+p[1]+'.'+p[0]+'.';}
+function esc(s){return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
 
 function kartica(o){
   const st=o.status||'nova';
+  const upit = o.slika_url && !o.cijena_finalna;
   const dod=(o.dodatci&&o.dodatci.length)?o.dodatci.join(', '):'';
-  const preuzimanje = o.nacin==='dostava'
-    ? 'Dostava'+(o.adresa?' → '+o.adresa:'')
-    : 'Osobno'+(o.termin?' · '+o.termin:'');
+  const preuzimanje=o.nacin==='dostava'?('Dostava'+(o.adresa?' → '+o.adresa:'')):('Osobno'+(o.termin?' · '+o.termin:''));
+
   let h='<div class="order '+st+'">';
   h+='<div class="o-top"><div>';
   h+='<div class="o-cake">'+(o.okus||'—')+(o.velicina?' · '+o.velicina:'')+'</div>';
   h+='<div class="o-when">Za: '+datumHr(o.datum_proslave)+(o.prigoda?' · '+o.prigoda:'')+'</div>';
-  h+='</div><span class="badge '+st+'">'+st.toUpperCase()+'</span></div>';
+  h+='</div><div class="badges"><span class="badge '+st+'">'+st.toUpperCase()+'</span>';
+  if(upit)h+='<span class="badge upit">UPIT ZA CIJENU</span>';
+  h+='</div></div>';
+
+  if(o.slika_url) h+='<a class="o-img" href="'+o.slika_url+'" target="_blank"><img src="'+o.slika_url+'" alt="primjer"></a>';
 
   h+='<div class="o-grid">';
-  h+=red('Premaz',o.premaz);
-  h+=red('Dodatci',dod);
-  h+=red('Natpis',o.natpis);
+  h+=red('Premaz',o.premaz); h+=red('Dodatci',dod); h+=red('Natpis',o.natpis);
   h+=red('Slavljenik',o.ime_slavljenika?(o.ime_slavljenika+(o.broj_godina?' ('+o.broj_godina+')':'')):'');
-  h+=red('Preuzimanje',preuzimanje);
-  h+=red('Kupac',o.kupac_ime);
-  h+=red('Cijena (okvirno)', o.cijena_okvirna?('<span class="o-price">'+o.cijena_okvirna+' €</span>'):'');
+  h+=red('Preuzimanje',preuzimanje); h+=red('Kupac',o.kupac_ime);
+  h+=red('Okvirno', o.cijena_okvirna?('<span class="o-price">'+o.cijena_okvirna+' €</span>'):'');
+  h+=red('Finalna cijena', o.cijena_finalna?('<span class="o-final">'+o.cijena_finalna+' €</span>'):'');
   h+='</div>';
-
   if(o.alergeni) h+='<div class="o-note">⚠️ '+o.alergeni+'</div>';
   if(o.napomena) h+='<div class="o-note">✍️ '+o.napomena+'</div>';
+  if(o.napomena_slasticar) h+='<div class="o-note">💬 Vaša napomena: '+o.napomena_slasticar+'</div>';
+
+  if(st==='nova'){
+    h+='<div class="ponuda-box">';
+    h+='<span class="lab">'+(upit?'Pošaljite ponudu za ovaj dizajn':'Finalna cijena (nije obavezno)')+'</span>';
+    h+='<input type="number" id="cf-'+o.id+'" placeholder="Finalna cijena €" value="'+(o.cijena_finalna||'')+'">';
+    h+='<textarea id="np-'+o.id+'" placeholder="Napomena kupcu (opcionalno)">'+esc(o.napomena_slasticar)+'</textarea>';
+    h+='<button class="btn btn-save" onclick="spremiPonudu(\''+o.id+'\')">Spremi ponudu</button>';
+    h+='</div>';
+  }
 
   h+='<div class="o-actions">';
   if(o.kupac_tel) h+='<a class="btn btn-call" href="tel:'+o.kupac_tel+'">📞 '+o.kupac_tel+'</a>';
   if(st==='nova'){
-    h+='<button class="btn btn-ok" onclick="postavi(\''+o.id+'\',\'odobrena\')">✓ Odobri</button>';
+    h+='<button class="btn btn-ok" onclick="odobri(\''+o.id+'\')">✓ Odobri</button>';
     h+='<button class="btn btn-no" onclick="postavi(\''+o.id+'\',\'odbijena\')">Odbij</button>';
+    h+='</div>';
+    h+='<div class="fwd-row"><input type="checkbox" id="fwd-'+o.id+'"> Proslijedi firmi '+FIRMA_DEKORACIJE+' (dekoracija)</div>';
   } else if(st==='odobrena'){
+    if(o.proslijedi_dekorater) h+='<a class="btn btn-fwd" href="'+mailFirmi(o)+'">✉️ Pošalji firmi '+FIRMA_DEKORACIJE+'</a>';
     h+='<button class="btn btn-done" onclick="postavi(\''+o.id+'\',\'gotova\')">Označi gotovom</button>';
-  }
-  h+='</div></div>';
+    h+='</div>';
+  } else { h+='</div>'; }
+
+  h+='</div>';
   return h;
 }
+function render(){const l=document.getElementById('lista');let r=SVE;
+  if(filter!=='sve') r=SVE.filter(o=>(o.status||'nova')===filter);
+  if(!r.length){l.innerHTML='<div class="state">Nema narudžbi u ovoj kategoriji.</div>';return;}
+  l.innerHTML=r.map(kartica).join('');}
 
-function render(){
-  const l=document.getElementById('lista');
-  let red=SVE;
-  if(filter!=='sve') red=SVE.filter(o=>(o.status||'nova')===filter);
-  if(!red.length){l.innerHTML='<div class="state">Nema narudžbi u ovoj kategoriji.</div>';return;}
-  l.innerHTML=red.map(kartica).join('');
+function mailFirmi(o){
+  const tijelo='Narudžba dekoracije:%0D%0A'
+    +'Prigoda: '+(o.prigoda||'')+'%0D%0A'
+    +'Datum: '+datumHr(o.datum_proslave)+'%0D%0A'
+    +'Slavljenik: '+(o.ime_slavljenika||'')+(o.broj_godina?(' ('+o.broj_godina+')'):'')+'%0D%0A'
+    +'Natpis: '+(o.natpis||'')+'%0D%0A'
+    +(o.slika_url?('Primjer (slika): '+o.slika_url+'%0D%0A'):'')
+    +(o.napomena?('Napomena: '+o.napomena+'%0D%0A'):'');
+  return 'mailto:?subject='+encodeURIComponent('Narudžba dekoracije — '+FIRMA_DEKORACIJE)+'&body='+tijelo;
 }
 
-async function postavi(id,status){
-  try{
-    const res=await fetch(SB_URL+'/rest/v1/narudzbe?id=eq.'+id,{
-      method:'PATCH',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify({status})
-    });
-    if(!res.ok)throw new Error(await res.text());
-    const o=SVE.find(x=>x.id===id); if(o)o.status=status;
-    brojevi(); render();
-  }catch(e){alert('Greška: '+e.message);console.error(e);}
+async function patch(id,polja){
+  const res=await fetch(SB_URL+'/rest/v1/narudzbe?id=eq.'+id,{method:'PATCH',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify(polja)});
+  if(!res.ok)throw new Error(await res.text());
+  const o=SVE.find(x=>x.id===id); if(o)Object.assign(o,polja);
 }
+async function spremiPonudu(id){
+  const cf=document.getElementById('cf-'+id).value;
+  const np=document.getElementById('np-'+id).value.trim();
+  try{await patch(id,{cijena_finalna:cf?parseFloat(cf):null,napomena_slasticar:np||null});render();}
+  catch(e){alert('Greška: '+e.message);console.error(e);}
+}
+async function odobri(id){
+  const fwd=document.getElementById('fwd-'+id);
+  const proslijedi=fwd?fwd.checked:false;
+  try{await patch(id,{status:'odobrena',proslijedi_dekorater:proslijedi});brojevi();render();}
+  catch(e){alert('Greška: '+e.message);console.error(e);}
+}
+async function postavi(id,status){try{await patch(id,{status});brojevi();render();}catch(e){alert('Greška: '+e.message);console.error(e);}}
 
 ucitaj();
 </script>
