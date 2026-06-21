@@ -164,6 +164,7 @@ const PONUDA = {
 };
 
 const stanje={okus:null,velicina:null,premaz:null,dodatci:[],prigoda:null,nacin:null,termin:null};
+let kupacFile=null;
 document.getElementById('shop').textContent=PONUDA.naziv;
 
 function richChips(id,items,key,subFn,multi){
@@ -226,7 +227,7 @@ function next(from){
   if(from===1){const a=!stanje.okus,b=!stanje.velicina,c=!stanje.premaz;showErr('e-okus',a);showErr('e-velicina',b);showErr('e-premaz',c);if(a||b||c)return;go(2);}
   else if(from===2){const a=!stanje.prigoda;showErr('e-prigoda',a);if(a)return;go(3);}
 }
-function prev(input){const f=input.files[0];if(!f)return;const img=document.getElementById('prevImg');img.src=URL.createObjectURL(f);img.style.display='block';}
+function prev(input){const f=input.files[0];if(!f)return;kupacFile=f;const img=document.getElementById('prevImg');img.src=URL.createObjectURL(f);img.style.display='block';}
 
 /* ===== SLANJE U BAZU ===== */
 async function posalji(){
@@ -244,10 +245,30 @@ async function posalji(){
   const btn=document.getElementById('btnSend');btn.disabled=true;btn.textContent='Šaljem…';
   const errBox=document.getElementById('submitErr');errBox.style.display='none';
 
+  /* upload slike (ako je kupac učitao primjer) */
+  let slikaUrl=null;
+  if(kupacFile){
+    try{
+      const ext=(kupacFile.name.split('.').pop()||'jpg').toLowerCase();
+      const fname=Date.now()+'-'+Math.random().toString(36).slice(2,8)+'.'+ext;
+      const up=await fetch(SB_URL+'/storage/v1/object/narudzbe/'+fname,{
+        method:'POST',
+        headers:{'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':kupacFile.type||'image/jpeg','x-upsert':'true'},
+        body:kupacFile
+      });
+      if(!up.ok)throw new Error(await up.text());
+      slikaUrl=SB_URL+'/storage/v1/object/public/narudzbe/'+fname;
+    }catch(e){
+      btn.disabled=false;btn.textContent='Potvrdi narudžbu';
+      errBox.style.display='block';errBox.textContent='Greška pri slanju slike: '+e.message;
+      console.error(e);return;
+    }
+  }
+
   const narudzba={
     okus:stanje.okus, velicina:stanje.velicina, premaz:stanje.premaz,
     dodatci:stanje.dodatci, alergeni:document.getElementById('alergeni').value.trim()||null,
-    prigoda:stanje.prigoda,
+    prigoda:stanje.prigoda, slika_url:slikaUrl,
     datum_proslave:datum, ime_slavljenika:document.getElementById('slavljenik').value.trim()||null,
     broj_godina:document.getElementById('godine').value?parseInt(document.getElementById('godine').value):null,
     natpis:document.getElementById('natpis').value.trim()||null,
