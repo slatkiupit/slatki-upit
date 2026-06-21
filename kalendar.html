@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kalendar — Slatki Upit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{--cream:#fff8f0;--card:#fff;--blush:#fde6ea;--blush-soft:#fbf5ec;--rose:#d88c9a;--rose-deep:#b96b7b;
+    --berry:#8a4a4a;--ink:#5a5050;--muted:#9a8b88;--gold:#d4af37;--line:#f0ddd8;--green:#6f9f7e;--shadow:0 8px 30px rgba(138,74,74,.08);--radius:18px;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Manrope',sans-serif;color:var(--ink);line-height:1.5;
+    background:radial-gradient(circle at 15% 0%,#fdeef0 0,transparent 40%),radial-gradient(circle at 85% 100%,#fff3e3 0,transparent 40%),var(--cream);
+    min-height:100vh;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:640px;margin:0 auto;padding:22px 16px 60px}
+
+  /* Header */
+  .head{text-align:center;margin-bottom:20px}
+  .head .tag{font-family:'Caveat',cursive;font-size:1.6rem;color:var(--rose);line-height:1}
+  .head h1{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--berry);font-weight:600}
+  .head .sub{color:var(--muted);font-size:.85rem;margin-top:2px}
+
+  /* Nav tabs */
+  .nav{display:flex;gap:8px;margin-bottom:20px}
+  .navlink{flex:1;text-align:center;padding:10px;border-radius:12px;font-weight:600;font-size:.86rem;
+    text-decoration:none;border:1.5px solid var(--line);color:var(--muted);background:#fff;transition:.15s}
+  .navlink.active{background:var(--rose);color:#fff;border-color:var(--rose)}
+  .navlink:hover:not(.active){border-color:var(--rose);color:var(--berry)}
+
+  /* Summary chips */
+  .summary{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap}
+  .chip{flex:1;min-width:120px;background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:12px 14px;box-shadow:var(--shadow);text-align:center}
+  .chip .num{font-family:'Fraunces',serif;font-size:1.6rem;font-weight:600;color:var(--berry);line-height:1}
+  .chip .lbl{font-size:.76rem;color:var(--muted);margin-top:3px}
+
+  .state{text-align:center;color:var(--muted);padding:40px 20px;font-size:.92rem}
+  .refresh{display:block;margin:0 auto 16px;background:#fff;border:1.5px solid var(--line);color:var(--berry);
+    padding:9px 18px;border-radius:999px;font-family:inherit;font-weight:600;font-size:.85rem;cursor:pointer}
+  .refresh:hover{border-color:var(--rose)}
+
+  /* Dan group */
+  .dan{margin-bottom:22px}
+  .dan-head{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+  .dan-datum{font-family:'Fraunces',serif;font-size:1.05rem;font-weight:600;color:var(--berry)}
+  .dan-day{font-size:.8rem;color:var(--muted);font-weight:500}
+  .dan-line{flex:1;height:1px;background:var(--line)}
+  .dan-count{font-size:.76rem;color:var(--muted);white-space:nowrap}
+  .hitno{background:#fff3dc;border:1.5px solid var(--gold);border-radius:8px;padding:3px 10px;
+    font-size:.72rem;font-weight:700;color:#a07d2a}
+  .danas-badge{background:var(--blush);border:1.5px solid var(--rose);border-radius:8px;
+    padding:3px 10px;font-size:.72rem;font-weight:700;color:var(--rose-deep)}
+
+  /* Kartica narudžbe u kalendaru */
+  .kard{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    box-shadow:var(--shadow);padding:14px 16px;margin-bottom:10px;
+    display:flex;gap:12px;align-items:flex-start;position:relative}
+  .kard-boja{width:6px;border-radius:4px;flex:0 0 6px;align-self:stretch;min-height:40px}
+  .kard-body{flex:1;min-width:0}
+  .kard-title{font-family:'Fraunces',serif;font-weight:600;color:var(--berry);font-size:1rem;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .kard-sub{font-size:.82rem;color:var(--muted);margin-top:2px}
+  .kard-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .tag{font-size:.72rem;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+  .tag-termin{background:var(--blush-soft);color:var(--berry)}
+  .tag-nacin{background:#e8f4ec;color:var(--green)}
+  .tag-cijena{background:#fff3dc;color:#a07d2a}
+  .tag-prigoda{background:#f0eaf8;color:#7a5a95}
+  .tag-gotova{background:#eee;color:var(--muted)}
+  .kard-actions{display:flex;flex-direction:column;gap:6px;align-items:flex-end;flex:0 0 auto}
+  .btn{padding:7px 12px;border-radius:9px;font-family:inherit;font-weight:600;font-size:.78rem;
+    cursor:pointer;border:none;transition:.15s;white-space:nowrap}
+  .btn-done{background:var(--blush);color:var(--berry)}
+  .btn-call{background:#fff;color:var(--berry);border:1.5px solid var(--line);text-decoration:none;display:inline-block}
+  .btn:active{transform:scale(.97)}
+
+  /* Boje izbornik */
+  .boje{display:flex;gap:6px;margin-top:6px}
+  .boja{width:22px;height:22px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:.15s;flex:0 0 22px}
+  .boja:hover,.boja.sel{border-color:var(--ink);transform:scale(1.15)}
+
+  /* Legenda */
+  .legenda{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:16px}
+  .legenda h4{font-weight:600;color:var(--berry);font-size:.85rem;margin-bottom:8px}
+  .leg-row{display:flex;flex-wrap:wrap;gap:8px}
+  .leg-item{display:flex;align-items:center;gap:6px;font-size:.78rem;color:var(--ink)}
+  .leg-dot{width:12px;height:12px;border-radius:50%;flex:0 0 12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="tag">Slatki Upit</div>
+    <h1>Kalendar narudžbi</h1>
+    <div class="sub" id="sub">Učitavam…</div>
+  </div>
+
+  <div class="nav">
+    <a class="navlink" href="narudzbe.html">📋 Narudžbe</a>
+    <a class="navlink active" href="kalendar.html">📅 Kalendar</a>
+  </div>
+
+  <div class="summary" id="summary"></div>
+
+  <div class="legenda">
+    <h4>Označi boju po vlastitom sistemu</h4>
+    <div class="leg-row">
+      <div class="leg-item"><div class="leg-dot" style="background:#d88c9a"></div> U tijeku / dogovoreno</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#f5c842"></div> Čeka se dekoracija</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#6f9f7e"></div> Gotovo, čeka preuzimanje</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#7a9fd4"></div> Dostava</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#b0b0b0"></div> Ostalo</div>
+    </div>
+  </div>
+
+  <button class="refresh" onclick="ucitaj()">↻ Osvježi</button>
+  <div id="lista"><div class="state">Učitavam…</div></div>
+</div>
+
+<script>
+const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
+const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
+const H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+
+const BOJE=['#d88c9a','#f5c842','#6f9f7e','#7a9fd4','#b0b0b0'];
+let SVE=[];
+
+function datumHr(d){if(!d)return '';const p=d.split('-');return p[2]+'.'+p[1]+'.'+p[0]+'.';}
+function danUTjednu(d){if(!d)return '';
+  const dani=['nedjelja','ponedjeljak','utorak','srijeda','četvrtak','petak','subota'];
+  return dani[new Date(d).getDay()];}
+function danasDatum(){return new Date().toISOString().slice(0,10);}
+function dansDo(d){const diff=Math.ceil((new Date(d)-new Date(danasDatum()))/(1000*60*60*24));return diff;}
+
+async function ucitaj(){
+  document.getElementById('lista').innerHTML='<div class="state">Učitavam…</div>';
+  try{
+    /* učitaj odobrene + gotove, sortirano po datumu proslave */
+    const res=await fetch(SB_URL+'/rest/v1/narudzbe?select=*&status=in.(odobrena,gotova)&order=datum_proslave.asc,termin.asc',{headers:H});
+    if(!res.ok)throw new Error(await res.text());
+    SVE=await res.json();
+    renderSummary();
+    render();
+  }catch(e){document.getElementById('lista').innerHTML='<div class="state">Greška pri učitavanju.<br>'+e.message+'</div>';console.error(e);}
+}
+
+function renderSummary(){
+  const danas=SVE.filter(o=>o.datum_proslave===danasDatum()).length;
+  const ovaj=SVE.filter(o=>{const d=dansDo(o.datum_proslave);return d>=0&&d<=7;}).length;
+  const ukupno=SVE.filter(o=>o.status==='odobrena').length;
+  document.getElementById('sub').textContent=SVE.length+' aktivnih narudžbi';
+  document.getElementById('summary').innerHTML=
+    '<div class="chip"><div class="num">'+danas+'</div><div class="lbl">Danas</div></div>'+
+    '<div class="chip"><div class="num">'+ovaj+'</div><div class="lbl">Ovaj tjedan</div></div>'+
+    '<div class="chip"><div class="num">'+ukupno+'</div><div class="lbl">U izradi</div></div>';
+}
+
+function render(){
+  const l=document.getElementById('lista');
+  if(!SVE.length){l.innerHTML='<div class="state">Nema odobrenih narudžbi.<br>Odobrene narudžbe automatski se pojavljuju ovdje.</div>';return;}
+
+  /* Grupiraj po datumu proslave */
+  const grupe={};
+  SVE.forEach(o=>{const d=o.datum_proslave||'—';if(!grupe[d])grupe[d]=[];grupe[d].push(o);});
+
+  let html='';
+  Object.keys(grupe).sort().forEach(d=>{
+    const lista=grupe[d];
+    const diff=d!=='—'?dansDo(d):null;
+    const jeHitno=diff!==null&&diff<=3&&diff>=0;
+    const jeDanas=d===danasDatum();
+
+    html+='<div class="dan">';
+    html+='<div class="dan-head">';
+    html+='<div class="dan-datum">'+datumHr(d)+'</div>';
+    html+='<div class="dan-day">'+danUTjednu(d)+'</div>';
+    if(jeDanas) html+='<span class="danas-badge">DANAS</span>';
+    else if(jeHitno&&diff===1) html+='<span class="hitno">SUTRA</span>';
+    else if(jeHitno) html+='<span class="hitno">ZA '+diff+' DANA</span>';
+    html+='<div class="dan-line"></div>';
+    html+='<div class="dan-count">'+lista.length+(lista.length===1?' narudžba':' narudžbe')+'</div>';
+    html+='</div>';
+
+    lista.forEach(o=>{
+      const gotova=o.status==='gotova';
+      const boja=o.kalendar_boja||'#e0d0d8';
+      const cijena=o.cijena_finalna||o.cijena_okvirna;
+      html+='<div class="kard">';
+      html+='<div class="kard-boja" style="background:'+boja+'"></div>';
+      html+='<div class="kard-body">';
+      html+='<div class="kard-title">'+(o.okus||'—')+(o.velicina?' · '+o.velicina:'')+(o.ime_slavljenika?' — '+o.ime_slavljenika+(o.broj_godina?' ('+o.broj_godina+')':''):'')+'</div>';
+      html+='<div class="kard-sub">'+(o.kupac_ime||'')+(o.kupac_tel?' · '+o.kupac_tel:'')+'</div>';
+      html+='<div class="kard-tags">';
+      if(o.termin) html+='<span class="tag tag-termin">🕐 '+o.termin+'</span>';
+      if(o.nacin) html+='<span class="tag tag-nacin">'+(o.nacin==='dostava'?'🚗 Dostava':'🏪 Osobno')+(o.adresa?' · '+o.adresa:'')+'</span>';
+      if(cijena) html+='<span class="tag tag-cijena">'+cijena+' €</span>';
+      if(o.prigoda) html+='<span class="tag tag-prigoda">'+o.prigoda+'</span>';
+      if(gotova) html+='<span class="tag tag-gotova">✓ Gotovo</span>';
+      html+='</div>';
+      if(!gotova){
+        html+='<div class="boje">';
+        BOJE.forEach(b=>{html+='<div class="boja'+(boja===b?' sel':'')+'" style="background:'+b+'" onclick="setBoja(\''+o.id+'\',\''+b+'\')" title="Označi"></div>';});
+        html+='</div>';
+      }
+      html+='</div>';
+      html+='<div class="kard-actions">';
+      if(o.kupac_tel) html+='<a class="btn btn-call" href="tel:'+o.kupac_tel+'">📞</a>';
+      if(!gotova) html+='<button class="btn btn-done" onclick="oznaci(\''+o.id+'\')">✓ Gotovo</button>';
+      html+='</div>';
+      html+='</div>';
+    });
+    html+='</div>';
+  });
+  l.innerHTML=html;
+}
+
+async function patch(id,polja){
+  const res=await fetch(SB_URL+'/rest/v1/narudzbe?id=eq.'+id,{method:'PATCH',headers:{...H,'Prefer':'return=minimal'},body:JSON.stringify(polja)});
+  if(!res.ok)throw new Error(await res.text());
+  const o=SVE.find(x=>x.id===id);if(o)Object.assign(o,polja);
+}
+async function setBoja(id,b){try{await patch(id,{kalendar_boja:b});render();}catch(e){alert('Greška: '+e.message);}}
+async function oznaci(id){try{await patch(id,{status:'gotova'});renderSummary();render();}catch(e){alert('Greška: '+e.message);}}
+
+ucitaj();
+</script>
+</body>
+</html>
