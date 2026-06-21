@@ -117,7 +117,7 @@ async function registriraj(){
         email:email,
         password:lozinka,
         data:{naziv:naziv,grad:grad},
-        redirect_to:'https://slatki-upit.vercel.app/narudzbe.html'
+        redirect_to:'https://slatki-upit.vercel.app/auth.html'
       })
     });
     const data=await res.json();
