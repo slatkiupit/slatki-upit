@@ -68,7 +68,20 @@
 </head>
 <body>
 <div class="wrap">
-  <div class="head"><div class="tag">Slatki Upit</div><h1>Narudžbe</h1><div class="sub" id="sub">Učitavam…</div></div>
+  <div class="head">
+    <div class="tag">Slatki Upit</div>
+    <h1>Narudžbe</h1>
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:4px">
+      <span style="font-size:.82rem;color:var(--berry);font-weight:600" id="userInfo"></span>
+      <span id="probaBadge" style="display:none;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:999px;background:#fdf2dc;color:#a07d2a"></span>
+      <button onclick="odjava()" style="font-size:.72rem;color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:3px 10px;cursor:pointer;font-family:inherit">Odjava</button>
+    </div>
+    <div class="sub" id="sub" style="margin-top:4px">Učitavam…</div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:12px">
+    <a href="narudzbe.html" style="flex:1;text-align:center;padding:9px;border-radius:12px;font-weight:600;font-size:.84rem;text-decoration:none;background:var(--rose);color:#fff;">📋 Narudžbe</a>
+    <a href="kalendar.html" style="flex:1;text-align:center;padding:9px;border-radius:12px;font-weight:600;font-size:.84rem;text-decoration:none;background:#fff;color:var(--muted);border:1.5px solid var(--line);">📅 Kalendar</a>
+  </div>
   <div class="filters">
     <div class="filter active" data-f="nova" onclick="setF('nova')">Nove <span class="count" id="c-nova">0</span></div>
     <div class="filter" data-f="odobrena" onclick="setF('odobrena')">Odobrene <span class="count" id="c-odobrena">0</span></div>
@@ -89,10 +102,34 @@
   </div>
 </div></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
 const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
+const db=supabase.createClient(SB_URL,SB_KEY);
 const H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+
+/* ── Auth check ── */
+let SESSION=null;
+(async()=>{
+  const{data:{session}}=await db.auth.getSession();
+  if(!session){window.location.href='prijava.html';return;}
+  SESSION=session;
+  const hdr=document.getElementById('userInfo');
+  if(hdr){
+    const{data:sl}=await db.from('slasticari').select('naziv,proba_do,status').eq('user_id',session.user.id).single();
+    if(sl){
+      hdr.textContent=sl.naziv;
+      const dana=Math.ceil((new Date(sl.proba_do)-new Date())/(1000*60*60*24));
+      if(sl.status==='proba'&&dana>0){
+        document.getElementById('probaBadge').textContent='Proba: još '+dana+' dana';
+        document.getElementById('probaBadge').style.display='inline-block';
+      }
+    }
+  }
+  H['Authorization']='Bearer '+session.access_token;
+  ucitaj();
+})();
 
 /* Firma za izradu dekoracija — promijeni u svoju */
 const FIRMA_DEKORACIJE="Topperi";
@@ -218,7 +255,8 @@ async function finalize(send){
 }
 async function postavi(id,status){try{await patch(id,{status});brojevi();render();}catch(e){alert('Greška: '+e.message);console.error(e);}}
 
-ucitaj();
+
+async function odjava(){await db.auth.signOut();window.location.href='prijava.html';}
 </script>
 </body>
 </html>
