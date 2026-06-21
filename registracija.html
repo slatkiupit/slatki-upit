@@ -7,7 +7,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{--cream:#fff8f0;--card:#fff;--blush:#fde6ea;--blush-soft:#fbf5ec;--rose:#d88c9a;--rose-deep:#b96b7b;--berry:#8a4a4a;--ink:#5a5050;--muted:#9a8b88;--line:#f0ddd8;--shadow:0 8px 30px rgba(138,74,74,.08);}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -30,9 +29,7 @@
   .link{text-align:center;margin-top:18px;font-size:.85rem;color:var(--muted)}
   .link a{color:var(--rose);font-weight:600;text-decoration:none}
   .trial{background:var(--blush-soft);border-radius:12px;padding:14px;font-size:.8rem;color:var(--berry);margin-top:18px;line-height:1.6}
-  .trial strong{font-weight:700}
   .divider{border:none;border-top:1px solid var(--line);margin:20px 0 4px}
-  /* Success screen */
   .success{display:none;text-align:center;padding:10px 0}
   .success .emoji{font-size:3rem;margin-bottom:12px}
   .success h3{font-family:'Fraunces',serif;color:var(--berry);font-size:1.3rem;margin-bottom:10px}
@@ -56,16 +53,16 @@
     <hr class="divider">
 
     <label>E-mail adresa</label>
-    <input type="email" id="email" placeholder="vas@mail.com" autocomplete="email">
+    <input type="email" id="email" placeholder="vas@mail.com">
 
     <div class="two">
       <div>
         <label>Lozinka</label>
-        <input type="password" id="lozinka" placeholder="Min. 6 znakova" autocomplete="new-password">
+        <input type="password" id="lozinka" placeholder="Min. 6 znakova">
       </div>
       <div>
         <label>Potvrdi lozinku</label>
-        <input type="password" id="lozinka2" placeholder="Ponovi lozinku" autocomplete="new-password">
+        <input type="password" id="lozinka2" placeholder="Ponovi">
       </div>
     </div>
 
@@ -73,10 +70,8 @@
     <div class="err" id="err"></div>
 
     <div class="trial">
-      🎁 <strong>Prvih 90 dana besplatno.</strong> Nakon toga nastavljate uz mjesečnu pretplatu —
-      otkažete kad god želite, bez skrivenih troškova.
+      🎁 <strong>Prvih 90 dana besplatno.</strong> Nakon toga nastavljate uz mjesečnu pretplatu — otkažete kad god želite.
     </div>
-
     <div class="link">Već imate račun? <a href="prijava.html">Prijavite se</a></div>
   </div>
 
@@ -84,7 +79,7 @@
     <div class="emoji">📧</div>
     <h3>Provjerite e-mail!</h3>
     <p>Poslali smo vam link za potvrdu na <strong id="sentTo"></strong>.<br><br>
-    Kliknite link u mailu i bit ćete automatski prijavljeni u aplikaciju.<br><br>
+    Kliknite link u mailu — bit ćete automatski prijavljeni.<br><br>
     <span style="font-size:.8rem;color:var(--muted)">Ne vidite mail? Provjerite Spam/Junk mapu.</span></p>
   </div>
 </div>
@@ -92,9 +87,10 @@
 <script>
 const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
 const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
-const db=supabase.createClient(SB_URL,SB_KEY);
 
-db.auth.getSession().then(({data:{session}})=>{if(session)window.location.href='narudzbe.html';});
+// Provjeri je li već prijavljena
+const sess=localStorage.getItem('sb_session');
+if(sess){try{const s=JSON.parse(sess);if(s&&s.access_token)window.location.href='narudzbe.html';}catch(e){}}
 
 async function registriraj(){
   const naziv=document.getElementById('naziv').value.trim();
@@ -114,19 +110,29 @@ async function registriraj(){
 
   btn.disabled=true;btn.textContent='Registriram...';
 
-  const{error}=await db.auth.signUp({
-    email,password:lozinka,
-    options:{data:{naziv,grad},emailRedirectTo:window.location.origin+'/narudzbe.html'}
-  });
-
-  if(error){
+  try{
+    const res=await fetch(SB_URL+'/auth/v1/signup',{
+      method:'POST',
+      headers:{'apikey':SB_KEY,'Content-Type':'application/json'},
+      body:JSON.stringify({
+        email,password:lozinka,
+        data:{naziv,grad},
+        options:{emailRedirectTo:'https://slatki-upit.vercel.app/narudzbe.html'}
+      })
+    });
+    const data=await res.json();
+    if(!res.ok||data.error){
+      const msg=data.error||data.msg||data.message||JSON.stringify(data);
+      throw new Error(msg==='User already registered'?'Ovaj e-mail je već registriran.':msg);
+    }
+    document.getElementById('forma').style.display='none';
+    document.getElementById('sentTo').textContent=email;
+    document.getElementById('success').style.display='block';
+  }catch(e){
     btn.disabled=false;btn.textContent='Registriraj se besplatno';
-    err.textContent=error.message==='User already registered'?'Ovaj e-mail je već registriran. Prijavite se.':'Greška: '+error.message;
-    err.classList.add('show');return;
+    err.textContent='Greška: '+e.message;
+    err.classList.add('show');
   }
-  document.getElementById('forma').style.display='none';
-  document.getElementById('sentTo').textContent=email;
-  document.getElementById('success').style.display='block';
 }
 </script>
 </body>
