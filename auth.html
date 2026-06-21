@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slatki Upit — Prijava</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Manrope:wght@500&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Manrope',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0;
+    background:radial-gradient(circle at 20% 0%,#fdeef0 0,transparent 50%),#fff8f0;text-align:center;padding:20px;}
+  .logo{font-family:'Caveat',cursive;font-size:2rem;color:#d88c9a;margin-bottom:12px}
+  p{color:#9a8b88;font-size:.95rem}
+  .spin{display:inline-block;width:32px;height:32px;border:3px solid #f0ddd8;border-top-color:#d88c9a;border-radius:50%;animation:spin 1s linear infinite;margin:16px auto}
+  @keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div>
+  <div class="logo">Slatki Upit</div>
+  <div class="spin"></div>
+  <p id="msg">Potvrđujem prijavu...</p>
+</div>
+<script>
+const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
+const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
+
+(async function(){
+  const hash=window.location.hash;
+  const params=new URLSearchParams(hash.substring(1));
+  const token=params.get('access_token');
+  const refresh=params.get('refresh_token');
+
+  if(!token){
+    document.getElementById('msg').textContent='Nema tokena — preusmjeravam na prijavu...';
+    setTimeout(()=>window.location.href='prijava.html',2000);
+    return;
+  }
+
+  try{
+    const res=await fetch(SB_URL+'/auth/v1/user',{
+      headers:{'apikey':SB_KEY,'Authorization':'Bearer '+token}
+    });
+    const user=await res.json();
+    localStorage.setItem('sb_session',JSON.stringify({
+      access_token:token,
+      refresh_token:refresh,
+      user:user
+    }));
+    document.getElementById('msg').textContent='Uspješno! Preusmjeravam...';
+    window.location.href='narudzbe.html';
+  }catch(e){
+    document.getElementById('msg').textContent='Greška — preusmjeravam na prijavu...';
+    setTimeout(()=>window.location.href='prijava.html',2000);
+  }
+})();
+</script>
+</body>
+</html>
