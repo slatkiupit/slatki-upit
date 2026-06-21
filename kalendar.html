@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root{--cream:#fff8f0;--card:#fff;--blush:#fde6ea;--blush-soft:#fbf5ec;--rose:#d88c9a;--rose-deep:#b96b7b;
     --berry:#8a4a4a;--ink:#5a5050;--muted:#9a8b88;--gold:#d4af37;--line:#f0ddd8;--green:#6f9f7e;--shadow:0 8px 30px rgba(138,74,74,.08);--radius:18px;}
@@ -100,6 +101,7 @@
   <div class="nav">
     <a class="navlink" href="narudzbe.html">📋 Narudžbe</a>
     <a class="navlink active" href="kalendar.html">📅 Kalendar</a>
+    <button onclick="odjava()" style="padding:9px 14px;border-radius:12px;font-weight:600;font-size:.84rem;background:#fff;color:var(--muted);border:1.5px solid var(--line);cursor:pointer;font-family:inherit">Odjava</button>
   </div>
 
   <div class="summary" id="summary"></div>
@@ -122,7 +124,15 @@
 <script>
 const SB_URL="https://mchaukfsckusovutsovr.supabase.co";
 const SB_KEY="sb_publishable_NsjGEsOVncc20x11U8Zclw_oFFbnRj7";
-const H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+const db=supabase.createClient(SB_URL,SB_KEY);
+let H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json'};
+
+(async()=>{
+  const{data:{session}}=await db.auth.getSession();
+  if(!session){window.location.href='prijava.html';return;}
+  H['Authorization']='Bearer '+session.access_token;
+  ucitaj();
+})();
 
 const BOJE=['#d88c9a','#f5c842','#6f9f7e','#7a9fd4','#b0b0b0'];
 let SVE=[];
@@ -224,7 +234,7 @@ async function patch(id,polja){
 async function setBoja(id,b){try{await patch(id,{kalendar_boja:b});render();}catch(e){alert('Greška: '+e.message);}}
 async function oznaci(id){try{await patch(id,{status:'gotova'});renderSummary();render();}catch(e){alert('Greška: '+e.message);}}
 
-ucitaj();
+async function odjava(){await db.auth.signOut();window.location.href='prijava.html';}
 </script>
 </body>
 </html>
