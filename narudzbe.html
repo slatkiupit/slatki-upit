@@ -148,18 +148,27 @@ function kartica(o){
 
   /* Polje za cijenu — SAMO kod vlastitog dizajna (cijena nije fiksna) */
   if(st==='nova' && vlastiti){
-    h+='<div class="ponuda-box">';
-    h+='<span class="lab">Vlastiti dizajn — dogovorite cijenu s kupcem pa je upišite</span>';
-    h+='<input type="number" id="cf-'+o.id+'" placeholder="Finalna cijena €" value="'+(o.cijena_finalna||'')+'">';
-    h+='<textarea id="np-'+o.id+'" placeholder="Napomena kupcu (opcionalno)">'+esc(o.napomena_slasticar)+'</textarea>';
-    h+='<button class="btn btn-offer" onclick="spremiPonudu(\''+o.id+'\')">Spremi cijenu</button>';
-    h+='</div>';
+    if(!o.cijena_finalna){
+      /* Korak 1 — još nema cijene: upiši i pošalji ponudu */
+      h+='<div class="ponuda-box">';
+      h+='<span class="lab">Vlastiti dizajn — dogovorite cijenu s kupcem pa je upišite ovdje</span>';
+      h+='<input type="number" id="cf-'+o.id+'" placeholder="Finalna cijena €">';
+      h+='<textarea id="np-'+o.id+'" placeholder="Napomena kupcu (opcionalno)"></textarea>';
+      h+='<button class="btn btn-offer" onclick="spremiPonudu(\''+o.id+'\')">📩 Pošalji ponudu kupcu</button>';
+      h+='</div>';
+    } else {
+      /* Korak 2 — cijena je poslana, čeka se odgovor */
+      h+='<div class="o-note" style="background:#f0eaf8;border-left:3px solid #a87fc0">⏳ Ponuda poslana ('+o.cijena_finalna+' €) — čeka se potvrda kupca. Kad kupac potvrdi, kliknite Odobri.</div>';
+    }
   }
 
   h+='<div class="o-actions">';
   if(o.kupac_tel) h+='<a class="btn btn-call" href="tel:'+o.kupac_tel+'">📞 '+o.kupac_tel+'</a>';
   if(st==='nova'){
-    h+='<button class="btn btn-ok" onclick="openForward(\''+o.id+'\')">✓ Odobri</button>';
+    /* Odobri se prikazuje: uvijek za obične narudžbe, a za vlastiti dizajn tek nakon što je cijena upisana */
+    if(!vlastiti || o.cijena_finalna){
+      h+='<button class="btn btn-ok" onclick="openForward(\''+o.id+'\')">✓ Odobri</button>';
+    }
     h+='<button class="btn btn-no" onclick="postavi(\''+o.id+'\',\'odbijena\')">Odbij</button>';
   } else if(st==='odobrena'){
     if(o.proslijedi_dekorater) h+='<a class="btn btn-fwd" href="'+mailFirmi(o)+'">✉️ Pošalji firmi '+FIRMA_DEKORACIJE+'</a>';
